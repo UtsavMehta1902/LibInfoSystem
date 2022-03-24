@@ -79,7 +79,6 @@ def delete_member(request, myid):
     return redirect("/view_members")
 
 
-@login_required(login_url = '/admin_login')
 def admin_login(request):
     if request.method == "POST":
         username = request.POST['username']

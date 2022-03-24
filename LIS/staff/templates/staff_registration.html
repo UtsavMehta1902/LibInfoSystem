@@ -7,7 +7,7 @@
 <div class="container">
     <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <br>
-        <h1 class="text-center"><u>Student Registration</u></h1>
+        <h1 class="text-center"><u>Staff Registration</u></h1>
 
     <div class="row mt-4">
         <div class="form-group col-md-6">
@@ -25,15 +25,6 @@
             <label><i style="font-weight: bold;">Email</i></label>
             <input type="email" class="form-control mt-2" name="email" placeholder="Enter Email" required>
         </div>
-        <div>
-            <label><i style="font-weight: bold;padding: 2rem 2rem 0.8rem 0rem; display: block;">Register As</i></label>
-            <select name="member_type">
-                <option value="UG">UG</option>
-                <option value="PG">PG</option>
-                <option value="RS">RS</option>
-                <option value="FAC">FAC</option>
-            </select>
-        </div>
     </div>
 
     <div class="row mt-4">
@@ -46,7 +37,7 @@
             <input type="password" class="form-control mt-2" name="confirm_password" placeholder="Confirm Password" required>
         </div>
     </div>
-    <button type="submit" class="btn btn-outline-primary mt-4">Register As Student</button>
+    <button type="submit" class="btn btn-outline-primary mt-4">Register As Staff</button>
 </div>
 </form>
 {% endblock %}
