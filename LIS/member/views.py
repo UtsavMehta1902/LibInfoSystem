@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 UG_cnt=0
@@ -50,9 +51,30 @@ def member_registration(request):
 
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         student = Member.objects.create(user=user, book_limit=limit, book_duration=duration)
-        # return redirect('/member/student_login')
+        return redirect('/member/login')
         user.save()
         student.save()
         alert = True
         return render(request, "member_registration.html", {'alert':alert})
     return render(request, "member_registration.html")
+
+@login_required(login_url = '/member/login')
+def profile(request):
+    return render(request, "profile.html")
+
+def member_login(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            if request.user.is_superuser:
+                return HttpResponse("You are not a Member!!")
+            else:
+                return redirect("/profile")
+        else:
+            alert = True
+            return render(request, "member_login.html", {'alert':alert})
+    return render(request, "member_login.html")
