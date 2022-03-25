@@ -47,7 +47,7 @@ def member_registration(request):
 
         if password != confirm_password:
             passnotmatch = True
-            return render(request, "member_registration.html", {'passnotmatch':passnotmatch})
+            return render(request, "member/registration.html", {'passnotmatch':passnotmatch})
 
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         student = Member.objects.create(user=user, book_limit=limit, book_duration=duration)
@@ -55,12 +55,12 @@ def member_registration(request):
         user.save()
         student.save()
         alert = True
-        return render(request, "member_registration.html", {'alert':alert})
-    return render(request, "member_registration.html")
+        return render(request, "member/registration.html", {'alert':alert})
+    return render(request, "member/registration.html")
 
 @login_required(login_url = '/member/login')
 def profile(request):
-    return render(request, "profile.html")
+    return render(request, "member/profile.html")
 
 def member_login(request):
     if request.method == "POST":
@@ -73,8 +73,13 @@ def member_login(request):
             if request.user.is_superuser:
                 return HttpResponse("You are not a Member!!")
             else:
-                return redirect("/profile")
+                return redirect("/member/profile")
         else:
             alert = True
-            return render(request, "member_login.html", {'alert':alert})
-    return render(request, "member_login.html")
+            return render(request, "member/login.html", {'alert':alert})
+    return render(request, "member/login.html")
+
+# @login_required(login_url = '/member/login')
+def member_logout(request):
+    logout(request)
+    return redirect("/member/login")
