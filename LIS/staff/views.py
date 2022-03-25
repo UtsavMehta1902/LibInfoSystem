@@ -41,12 +41,12 @@ def staff_registration(request):
 def add_book(request):
 
     if request.method == "POST":
-        name = request.POST['name']
+        title = request.POST['title']
         author = request.POST['author']
         isbn = request.POST['isbn']
         category = request.POST['category']
 
-        books = Book.objects.create(name=name, author=author, isbn=isbn, category=category)
+        books = Book.objects.create(title=title, author=author, isbn=isbn, category=category)
         books.save()
         alert = True
         return render(request, "staff/add_book.html", {'alert':alert})
@@ -69,14 +69,14 @@ def view_members(request):
 def delete_book(request, myid):
     books = Book.objects.filter(id=myid)
     books.delete()
-    return redirect("staff/view_books")
+    return redirect("/staff/view_books")
 
 
 @login_required(login_url = '/admin_login')
 def delete_member(request, myid):
     members = Member.objects.filter(id=myid)
     members.delete()
-    return redirect("staff/view_members")
+    return redirect("/staff/view_members")
 
 
 def admin_login(request):
@@ -87,10 +87,8 @@ def admin_login(request):
 
         if user is not None:
             login(request, user)
-            if request.user.is_superuser:
-                return redirect("staff/add_book")
-            else:
-                return HttpResponse("You are not an admin.")
+            return redirect("/staff/add_book")
+            
         else:
             alert = True
             return render(request, "staff/admin_login.html", {'alert':alert})
