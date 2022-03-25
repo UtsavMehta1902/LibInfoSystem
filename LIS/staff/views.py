@@ -41,12 +41,11 @@ def staff_registration(request):
 def add_book(request):
 
     if request.method == "POST":
-        title = request.POST['title']
-        author = request.POST['author']
-        isbn = request.POST['isbn']
-        category = request.POST['category']
+        title = request.POST.get('title',"")
+        author = request.POST.get('author',"")
+        isbn = request.POST.get('isbn',0)
 
-        books = Book.objects.create(title=title, author=author, isbn=isbn, category=category)
+        books = Book.objects.create(title=title, author=author, isbn=isbn)
         books.save()
         alert = True
         return render(request, "staff/add_book.html", {'alert':alert})
