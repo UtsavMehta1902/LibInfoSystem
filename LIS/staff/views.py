@@ -95,7 +95,7 @@ def admin_login(request):
 
 def Logout(request):
     logout(request)
-    return redirect ("/staff/")
+    return redirect ("/staff/admin_login")
 
 
     
