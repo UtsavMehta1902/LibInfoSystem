@@ -37,7 +37,7 @@ def staff_registration(request):
     return render(request, "staff/staff_registration.html")
 
 
-@login_required(login_url = '/admin_login')
+@login_required(login_url = '/staff_login')
 def add_book(request):
 
     if request.method == "POST":
@@ -52,33 +52,33 @@ def add_book(request):
     return render(request, "staff/add_book.html")
 
 
-@login_required(login_url = '/admin_login')
+@login_required(login_url = '/staff_login')
 def view_books(request):
     books = Book.objects.all()
     return render(request, "staff/view_books.html", {'books':books})
 
 
-@login_required(login_url = '/admin_login')
+@login_required(login_url = '/staff_login')
 def view_members(request):
     members = Member.objects.all()
     return render(request, "staff/view_members.html", {'members':members})
 
 
-@login_required(login_url = '/admin_login')
+@login_required(login_url = '/staff_login')
 def delete_book(request, myid):
     books = Book.objects.filter(id=myid)
     books.delete()
     return redirect("/staff/view_books")
 
 
-@login_required(login_url = '/admin_login')
+@login_required(login_url = '/staff_login')
 def delete_member(request, myid):
     members = Member.objects.filter(id=myid)
     members.delete()
     return redirect("/staff/view_members")
 
 
-def admin_login(request):
+def staff_login(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -90,12 +90,12 @@ def admin_login(request):
             
         else:
             alert = True
-            return render(request, "staff/admin_login.html", {'alert':alert})
-    return render(request, "staff/admin_login.html")
+            return render(request, "staff/login.html", {'alert':alert})
+    return render(request, "staff/login.html")
 
 def Logout(request):
     logout(request)
-    return redirect ("/staff/admin_login")
+    return redirect ("/staff/staff_login")
 
 
     

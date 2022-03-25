@@ -1,13 +1,13 @@
 {% extends 'staff/basic.html' %}
 {% load static %}
-{% block title %} Library Management System {% endblock %}
+{% block title %} Library Information System {% endblock %}
 {% block css %}
 {% endblock %}
 {% block body %}
 <div class="container">
 <br>
-<h1 class="text-center"><u>Admin Login</u></h1><br>
-<p><b>Note:</b> Only the admin can login from here. No member will be allowed to login.</p>
+<h1 class="text-center"><u>Staff Login</u></h1><br>
+<p><b>Note:</b> Only the staff can login from here. No member will be allowed to login.</p>
     <form method="POST"> {% csrf_token %}
 
     <div class="row mt-4">
