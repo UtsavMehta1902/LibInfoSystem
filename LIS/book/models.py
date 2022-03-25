@@ -7,8 +7,8 @@ class Book(models.Model):
     author = models.CharField(max_length=200)
     isbn = models.CharField(max_length= 15)
     rack_number = models.CharField(max_length= 10)
-    issue_status = models.CharField(max_length= 15)
-    date_issued = models.DateField(null=True)
+    issue_status = models.DateField(null= True)
+    date_added = models.DateField(null=True)
 
    
     def __str__(self):
