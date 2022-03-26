@@ -75,12 +75,10 @@ def delete_book(request, myid):
     return redirect("/staff/view_books")
 
 
-@login_required(login_url = '/staff_login')
 def delete_member(request, myid):
     members = Member.objects.filter(id=myid)
     members.delete()
     return redirect("/staff/view_members")
-
 
 def staff_login(request):
     if request.method == "POST":

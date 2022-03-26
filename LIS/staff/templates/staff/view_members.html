@@ -27,11 +27,7 @@
                 <td>{{member.user.get_full_name}}</td>
                 <td>{{member.user.id}}</td>
                 <td>{{member.user.email}}</td>
-                <!-- <td>{{member.phone}}</td>
-                <td>{{member.branch}}</td>
-                <td>{{member.classroom}}</td> 
-                <td>{{member.roll_no}}</td> -->
-                <td><a href="/delete_member/{{member.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a></td>
+                <td><a href="/staff/delete_member/{{member.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a></td>
             </tr>
             {% endfor %}
         </tbody>
