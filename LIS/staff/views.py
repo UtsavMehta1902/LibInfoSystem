@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 clerk_cnt=0
 
+def staff_home_page(request):
+    return render(request, "staff/home.html")
+
 def staff_registration(request):
 
     if request.method == "POST":

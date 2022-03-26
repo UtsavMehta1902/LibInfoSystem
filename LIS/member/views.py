@@ -9,6 +9,9 @@ PG_cnt=0
 RS_cnt=0
 FAC_cnt=0
 
+def member_home_page(request):
+    return render(request, "member/home.html")
+
 def member_registration(request):
     if request.method == "POST":
         global UG_cnt, PG_cnt, RS_cnt, FAC_cnt

@@ -21,27 +21,8 @@ ol, ul {
 	list-style: none;
 }
 
-blockquote, q {
-	quotes: none;
-}
-
-	blockquote:before, blockquote:after, q:before, q:after {
-		content: '';
-		content: none;
-	}
-
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
 body {
 	-webkit-text-size-adjust: none;
-}
-
-mark {
-	background-color: transparent;
-	color: inherit;
 }
 
 input::-moz-focus-inner {
@@ -271,7 +252,6 @@ input, select, textarea {
 
 	#header-wrapper {
 		background: url("images/bg.jpg");
-		background-position: top left, center center;
 		background-size: cover;
 		background-repeat: no-repeat;
 		padding: 3em 0;
