@@ -31,3 +31,5 @@ class Reminder(models.Model):
     book  = models.OneToOneField(Book, on_delete = models.CASCADE)
     member = models.ForeignKey(Member, on_delete = models.CASCADE)
     date_of_rem = models.DateField(null = True)
+
+    
