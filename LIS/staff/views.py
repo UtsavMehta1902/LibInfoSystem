@@ -80,10 +80,16 @@ def delete_member(request, myid):
     members.delete()
     return redirect("/staff/view_members")
 
+@login_required(login_url = '/staff_login')
 def delete_book(request, myid):
-    books = Book.objects.filter(id=myid)
-    books.delete()
-    return redirect("/staff/view_books")
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        books = Book.objects.filter(id=myid)
+        books.delete()
+        return redirect("/staff/view_books")
+    else:
+        return redirect("/403")
 
 def staff_login(request):
     if request.method == "POST":
