@@ -10,13 +10,12 @@
         <thead>
             <tr>
                 <th>Sr.No</th>
-                <th>ISBN/th>
+                <th>ISBN</th>
                 <th>Title</th>
                 <th>Author(s)</th>
                 <th>Rack Number</th>
-                <th>Issue Status</th>
-                <!-- <th>Category</th> -->
-                <!-- <th>Delete</th> -->
+                <th>Issue Date</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -27,7 +26,7 @@
                 <td>{{book.title}}</td>
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
-                <td>{{book.issue_status}}</td>
+                <td>{{book.issue_date}}</td>
             </tr>
             {% endfor %}
         </tbody>
