@@ -45,6 +45,7 @@ def add_book(request):
 
     if request.method == "POST":
         title = request.POST.get('title',"")
+        print(title)
         author = request.POST.get('author',"")
         isbn = request.POST.get('isbn',0)
 
