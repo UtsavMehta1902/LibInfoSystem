@@ -49,8 +49,8 @@ def add_book(request):
             print(title)
             author = request.POST.get('author',"")
             isbn = request.POST.get('isbn',0)
-
-            books = Book.objects.create(title=title, author=author, isbn=isbn)
+            rack_number = request.POST.get('rack_number',"")
+            books = Book.objects.create(title=title, author=author, isbn=isbn, rack_number=rack_number)
             books.save()
             alert = True
             return render(request, "staff/add_book.html", {'alert':alert})
