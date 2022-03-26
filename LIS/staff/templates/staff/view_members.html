@@ -11,7 +11,7 @@
             <tr class="text-center">
                 <th>Sr.No</th>
                 <th>Name</th>
-                <th>ID</th>
+                <th>UserName</th>
                 <th>Email</th>
                 <!-- <th>Mobile Number</th>
                 <th>Branch</th>
@@ -25,7 +25,7 @@
             <tr class="text-center">
                 <td>{{forloop.counter}}.</td>
                 <td>{{member.user.get_full_name}}</td>
-                <td>{{member.user.id}}</td>
+                <td>{{member.user.username}}</td>
                 <td>{{member.user.email}}</td>
                 <td><a href="/staff/delete_member/{{member.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a></td>
             </tr>

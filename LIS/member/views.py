@@ -65,6 +65,10 @@ def member_registration(request):
 def profile(request):
     return render(request, "member/profile.html")
 
+def view_books(request):
+    books = Book.objects.all()
+    return render(request, "member/view_books.html", {'books':books})
+
 def member_login(request):
     if request.method == "POST":
         username = request.POST['username']
