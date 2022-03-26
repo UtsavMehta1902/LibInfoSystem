@@ -6,6 +6,11 @@
 {% block body %}
 <div class="container mt-4">
     <h1 class="text-center"><u>All Books List</u></h1>
+    {% if message %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endif %}
     <table class="table table-hover" id="example">
         <thead>
             <tr>

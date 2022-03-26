@@ -39,7 +39,6 @@ def staff_registration(request):
         return render(request, "staff/staff_registration.html", {'alert':alert})
     return render(request, "staff/staff_registration.html")
 
-
 @login_required(login_url = '/staff_login')
 def add_book(request):
 
@@ -55,7 +54,6 @@ def add_book(request):
         return render(request, "staff/add_book.html", {'alert':alert})
     return render(request, "staff/add_book.html")
 
-
 @login_required(login_url = '/staff_login')
 def view_books(request):
     books = Book.objects.all()
@@ -66,14 +64,6 @@ def view_books(request):
 def view_members(request):
     members = Member.objects.all()
     return render(request, "staff/view_members.html", {'members':members})
-
-
-@login_required(login_url = '/staff_login')
-def delete_book(request, myid):
-    books = Book.objects.filter(id=myid)
-    books.delete()
-    return redirect("/staff/view_books")
-
 
 def delete_member(request, myid):
     members = Member.objects.filter(id=myid)
@@ -116,5 +106,6 @@ def Logout(request):
     logout(request)
     return redirect ("/staff/staff_login")
 
+def issue_books(request, myid):
 
-    
+    return render(request, "staff/issue_books.html")
