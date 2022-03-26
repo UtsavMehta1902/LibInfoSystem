@@ -5,12 +5,16 @@
 {% endblock %}
 {% block body %}
 <div class="container mt-4">
+<<<<<<< HEAD
     <h1 class="text-center"><u>All Books List</u></h1>
     {% if message %}
         <div class="alert alert-success">
             {{ message }}
         </div>
     {% endif %}
+=======
+    <h1 class="text-center"><u>Books</u></h1>
+>>>>>>> 507e373 (nothing new)
     <table class="table table-hover" id="example">
         <thead>
             <tr>
@@ -19,7 +23,10 @@
                 <th>Title</th>
                 <th>Author(s)</th>
                 <th>Rack Number</th>
+                <th>Currently Issued</th>
                 <th>Issue Date</th>
+                <th>Issued By</th>
+                <!-- <th>Reserved By</th> -->
                 <th>Delete</th>  
             </tr>
         </thead>
@@ -31,7 +38,14 @@
                 <td>{{book.title}}</td>
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
+                {% if book.issue_date == null or book.issue_date == "" %}
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No</td>
+                {% else %}
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes</td>
+                {% endif %}
                 <td>{{book.issue_date}}</td>
+                <td>{{book.issue_member.user.get_full_name}}</td>
+                <!-- <td>{{null}}</td> -->
                 <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
             </tr>
             {% endfor %}
