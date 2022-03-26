@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/nyati_pranav26/Desktop/LibInfoSystem/.venv"
+VIRTUAL_ENV="/home/nyati_pranav26/Desktop/ProjLib/.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
