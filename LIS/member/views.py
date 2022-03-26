@@ -67,7 +67,7 @@ def profile(request):
 
 def view_books(request):
     books = Book.objects.all()
-    return render(request, "member/view_books.html", {'books':books})
+    return render(request, "member/view_books.html", {'books' :books})
 
 def member_login(request):
     if request.method == "POST":

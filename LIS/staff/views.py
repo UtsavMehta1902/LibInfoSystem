@@ -41,37 +41,63 @@ def staff_registration(request):
 
 @login_required(login_url = '/staff_login')
 def add_book(request):
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        if request.method == "POST":
+            title = request.POST.get('title',"")
+            print(title)
+            author = request.POST.get('author',"")
+            isbn = request.POST.get('isbn',0)
 
-    if request.method == "POST":
-        title = request.POST.get('title',"")
-        print(title)
-        author = request.POST.get('author',"")
-        isbn = request.POST.get('isbn',0)
+            books = Book.objects.create(title=title, author=author, isbn=isbn)
+            books.save()
+            alert = True
+            return render(request, "staff/add_book.html", {'alert':alert})
+        return render(request, "staff/add_book.html")  
 
-        books = Book.objects.create(title=title, author=author, isbn=isbn)
-        books.save()
-        alert = True
-        return render(request, "staff/add_book.html", {'alert':alert})
-    return render(request, "staff/add_book.html")
+    else:
+        return redirect("/403")
 
 @login_required(login_url = '/staff_login')
 def view_books(request):
-    books = Book.objects.all()
-    return render(request, "staff/view_books.html", {'books':books})
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        books = Book.objects.all()
+        return render(request, "staff/view_books.html", {'books':books})
+    else:
+        return redirect("/403")
+
+    
 
 
 @login_required(login_url = '/staff_login')
 def view_members(request):
-    members = Member.objects.all()
-    return render(request, "staff/view_members.html", {'members':members})
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        members = Member.objects.all()
+        return render(request, "staff/view_members.html", {'members':members})
+    else:
+        return redirect("/403")
 
 def delete_member(request, myid):
-    members = Member.objects.filter(id=myid)
-    members.delete()
-    return redirect("/staff/view_members")
+
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+
+    if user_name == "LIBC":   
+        members = Member.objects.filter(id=myid)
+        members.delete()
+        return redirect("/staff/view_members")
+    else:
+        return redirect("/403")
+    
 
 @login_required(login_url = '/staff_login')
 def delete_book(request, myid):
+
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC":
@@ -99,13 +125,15 @@ def staff_login(request):
 
 @login_required(login_url = '/staff_login')
 def profile(request):
-    return render(request, "staff/profile.html")
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        return render(request, "staff/profile.html")
+    else:
+        return redirect("/403")
 
 
 def Logout(request):
     logout(request)
     return redirect ("/staff/staff_login")
 
-def issue_books(request, myid):
-
-    return render(request, "staff/issue_books.html")
