@@ -86,12 +86,18 @@ def staff_login(request):
 
         if user is not None:
             login(request, user)
-            return redirect("/staff/add_book")
+            return redirect("/staff/profile")
             
         else:
             alert = True
             return render(request, "staff/login.html", {'alert':alert})
     return render(request, "staff/login.html")
+
+
+@login_required(login_url = '/staff_login')
+def profile(request):
+    return render(request, "staff/profile.html")
+
 
 def Logout(request):
     logout(request)

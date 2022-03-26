@@ -14,33 +14,40 @@
     {% endblock %}
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Library Information System</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/change_password/">Change Password</a>
+                <a class="nav-link active" aria-current="page" href="/view_members/">View All Members</a>
               </li>
               &nbsp;&nbsp;&nbsp;
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/profile/">Profile</a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Books
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="/staff/add_book/">Add Books</a></li>
+                  <li><a class="dropdown-item" href="/staff/view_books/">View All Books</a></li>
+                </ul>
               </li>
               &nbsp;&nbsp;&nbsp;
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="/issued_books/">View All Issued Books</a>
+                </li>
+                &nbsp;&nbsp;&nbsp;
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/student_issued_books/">View Issued Books</a>
-              </li>
-              &nbsp;&nbsp;&nbsp;
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="staff/logout/">Logout</a>
+                <a class="nav-link active" aria-current="page" href="/staff/logout/">Logout</a>
               </li>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <li class="nav-item">
-                <a style="font-weight:600; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;" class="nav-link active" href="#">Welcome Member: {{request.user}}</a>
+                <a style="font-weight:600; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;" class="nav-link active" href="#">Welcome : {{request.user}}</a>
               </li>
             </ul>
           </div>
