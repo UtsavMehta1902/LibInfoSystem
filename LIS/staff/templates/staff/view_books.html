@@ -15,7 +15,7 @@
                 <th>Author(s)</th>
                 <th>Rack Number</th>
                 <th>Issue Date</th>
-                
+                <th>Delete</th>  
             </tr>
         </thead>
         <tbody>
@@ -27,6 +27,7 @@
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
                 <td>{{book.issue_date}}</td>
+                <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
             </tr>
             {% endfor %}
         </tbody>
