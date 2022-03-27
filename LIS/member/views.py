@@ -1,3 +1,5 @@
+from operator import truediv
+import re
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
@@ -53,8 +55,8 @@ def member_registration(request):
             passnotmatch = True
             return render(request, "member/registration.html", {'passnotmatch':passnotmatch})
 
-        user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name, insti_id=insti_id )
-        member = Member.objects.create(user=user, book_limit=limit, book_duration=duration)
+        user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
+        member = Member.objects.create(insti_id=insti_id, user=user, book_limit=limit, book_duration=duration)
         return redirect('/member/login')
         user.save()
         member.save()
@@ -64,7 +66,14 @@ def member_registration(request):
 
 @login_required(login_url = '/member/login')
 def profile(request):
-    return render(request, "member/profile.html")
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    is_faculty = False
+    if(user_name == "FAC"):
+        is_faculty = True
+    
+
+    return render(request, "member/profile.html", {'is_faculty': is_faculty})
 
 def view_books(request):
     books = Book.objects.all()

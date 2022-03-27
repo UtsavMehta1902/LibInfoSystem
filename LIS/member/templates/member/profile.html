@@ -37,9 +37,21 @@ background: rgb(81, 189, 171);
                                 <p>{{user.get_full_name}}</p>
                             </div>
                         </div>
+                        <div class="row">    
+                            <div class="col-md-6">
+                                {% if is_faculty ==  True %}
+                                    <label>Faculty ID:</label>
+                                {% else %}
+                                    <label>Student Roll Number:</label>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{user.member.insti_id}}</p>
+                            </div>                            
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <label>Email:</label>
+                                <label>Email Address:</label>
                             </div>
                             <div class="col-md-6">
                                 <p>{{user.email}}</p>
