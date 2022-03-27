@@ -13,6 +13,8 @@
                 <th>Name</th>
                 <th>UserName</th>
                 <th>Email</th>
+                <th>Currently Issued Books</th>
+                <th>Currently Reserved Book</th>
                 <!-- <th>Mobile Number</th>
                 <th>Branch</th>
                 <th>Class</th>
@@ -29,6 +31,8 @@
                 <td>{{member.user.get_full_name}}</td>
                 <td>{{member.user.username}}</td>
                 <td>{{member.user.email}}</td>
+                <td>{{member.reserved_book.isbn}}</td>
+                <td>{{member.reserved_book.isbn}}</td>
                 {% if is_librarian %}
                     <td><a href="/staff/delete_member/{{member.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this member?')">Delete</a></td>
                 {% endif %}
