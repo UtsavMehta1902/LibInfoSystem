@@ -7,6 +7,7 @@ from book.models import Book
 class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     book_limit = models.IntegerField()
+    insti_id = models.CharField(max_length=15, null = True, default= None)
     book_duration = models.IntegerField()
     reserved_book = models.ForeignKey(Book,on_delete=models.SET_NULL, null=True, default=None)
     # reminder = models.CharField(max_length=300, blank=True, default='')

@@ -1,4 +1,4 @@
-{% extends 'staff/staff_navbar.html' %}
+{% extends navbar_extends %}
 {% load static %}
 {% block title %} All Members {% endblock %}
 {% block css %}
@@ -17,7 +17,9 @@
                 <th>Branch</th>
                 <th>Class</th>
                 <th>Roll Number</th> -->
-                <th>Delete</th>
+                {% if is_librarian %}
+                    <th>Delete</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -27,7 +29,9 @@
                 <td>{{member.user.get_full_name}}</td>
                 <td>{{member.user.username}}</td>
                 <td>{{member.user.email}}</td>
-                <td><a href="/staff/delete_member/{{member.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a></td>
+                {% if is_librarian %}
+                    <td><a href="/staff/delete_member/{{member.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this member?')">Delete</a></td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

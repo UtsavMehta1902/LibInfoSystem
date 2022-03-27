@@ -1,4 +1,4 @@
-{% extends 'staff/staff_navbar.html' %}
+{% extends navbar_extends %}
 {% load static %}
 {% block title %} Library Information System {% endblock %}
 {% block css %}
@@ -18,7 +18,9 @@
                 <th>Issue Date</th>
                 <th>Issued By</th>
                 <!-- <th>Reserved By</th> -->
-                <th>Delete</th>  
+                {% if is_clerk %}
+                    <th>Delete</th> 
+                {% endif %} 
             </tr>
         </thead>
         <tbody>
@@ -37,7 +39,9 @@
                 <td>{{book.issue_date}}</td>
                 <td>{{book.issue_member.user.get_full_name}}</td>
                 <!-- <td>{{null}}</td> -->
-                <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
+                {% if is_clerk %}
+                    <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
+                {% endif %} 
             </tr>
             {% endfor %}
         </tbody>
