@@ -11,6 +11,8 @@ clerk_cnt=0
 def staff_home_page(request):
     return render(request, "staff/home.html")
 
+
+
 def staff_registration(request):
 
     if request.method == "POST":
@@ -21,10 +23,15 @@ def staff_registration(request):
         email = request.POST['email']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
+        staff_type = request.POST['staff_type']
         username = ""
-        
-        username= "LIBC_" + str(clerk_cnt)
-        clerk_cnt+=1
+
+        if staff_type == "LIBRARIAN":
+            username= "LIBR_0"
+
+        elif staff_type == "LIBRARY CLERK":
+            username= "LIBC_" + str(clerk_cnt)
+            clerk_cnt+=1
 
         if password != confirm_password:
             passnotmatch = True
@@ -38,6 +45,8 @@ def staff_registration(request):
         alert = True
         return render(request, "staff/staff_registration.html", {'alert':alert})
     return render(request, "staff/staff_registration.html")
+
+    
 
 @login_required(login_url = '/staff_login')
 def add_book(request):
@@ -63,20 +72,18 @@ def add_book(request):
 def view_books(request):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
-    if user_name == "LIBC":
+    if user_name == "LIBC" or user_name == "LIBR":
         books = Book.objects.all()
         return render(request, "staff/view_books.html", {'books':books})
     else:
         return redirect("/403")
-
-    
 
 
 @login_required(login_url = '/staff_login')
 def view_members(request):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
-    if user_name == "LIBC":
+    if user_name == "LIBC" or user_name == "LIBR":
         members = Member.objects.all()
         return render(request, "staff/view_members.html", {'members':members})
     else:
@@ -87,7 +94,7 @@ def delete_member(request, myid):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
 
-    if user_name == "LIBC":   
+    if user_name == "LIBR":   
         members = Member.objects.filter(id=myid)
         members.delete()
         return redirect("/staff/view_members")
