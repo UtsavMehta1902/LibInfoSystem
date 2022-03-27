@@ -9,7 +9,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
+# from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .token import account_activation_token
 from django.template.loader import render_to_string
@@ -181,6 +181,9 @@ def reserve_book(request, book_id):
         return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
     else:
         member.reserved_book = book
-        issue_datetime = datetime.datetime.now()
+        member.reserve_datetime = datetime.datetime.now()
+        member.save()
+        return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
+
         
 
