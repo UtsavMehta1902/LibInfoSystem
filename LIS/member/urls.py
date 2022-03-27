@@ -7,6 +7,10 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("view_books/", views.view_books, name="view_books"),
     path("logout/", views.member_logout, name="logout"),
+<<<<<<< HEAD
     path("issue_book/<int:book_id>/", views.issue_book, name="issue_book"),
+=======
+    path('activate/<uidb64>/<token>', views.activate, name='activate'), 
+>>>>>>> a1028af (email authentication in process)
     path('', views.member_home_page, name="home"),
 ]

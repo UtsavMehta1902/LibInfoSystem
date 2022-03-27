@@ -1,0 +1,6 @@
+{% autoescape off %}
+Greetings for the day,
+Please click on the link to activate your Composit account,
+https://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+In case of any queries, feel free to contact us at composit.iit@gmail.com
+{% endautoescape %}

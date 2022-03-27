@@ -4,8 +4,21 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
+<<<<<<< HEAD
 import datetime
+=======
+from django.core.mail import EmailMessage
+from django.conf import settings
+>>>>>>> a1028af (email authentication in process)
 
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .token import account_activation_token
+from django.template.loader import render_to_string
+import json
+from member.decrypter import decoder
+from django.core.mail.backends.smtp import EmailBackend
 # Create your views here.
 # UG_cnt=0
 # PG_cnt=0
@@ -58,12 +71,56 @@ def member_registration(request):
 
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         member = Member.objects.create(insti_id=insti_id, user=user, book_limit=limit, book_duration=duration)
-        return redirect('/member/login')
+        
+        user.is_active = False
         user.save()
         member.save()
         alert = True
+
+
+        connection = EmailBackend(host='smtp.gmail.com',
+        port=587,
+        username='noreplycomposit2022@gmail.com', 
+        password='composit@2022')
+        
+    
+        body = render_to_string('email_verification.html', {
+        'user': user,
+        'domain': 'composit-api.herokuapp.com',
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+        })
+
+        emailSender = EmailMessage(
+            'Composit Registration confirmed',
+            body,
+            settings.EMAIL_HOST_USER,
+            [email],
+            bcc=['sailokesh.gorantla@ecell-iitkgp.org'],
+            connection=connection
+        )
+        emailSender.fail_silently = False
+        emailSender.send()
+
+
+        return redirect('/member/login')
         return render(request, "member/registration.html", {'alert':alert})
     return render(request, "member/registration.html")
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
 
 @login_required(login_url = '/member/login')
 def profile(request):
