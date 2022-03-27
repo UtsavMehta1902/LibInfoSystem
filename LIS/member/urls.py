@@ -7,5 +7,6 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("view_books/", views.view_books, name="view_books"),
     path("logout/", views.member_logout, name="logout"),
+    path("issue_book/<int:book_id>/", views.issue_book, name="issue_book"),
     path('', views.member_home_page, name="home"),
 ]

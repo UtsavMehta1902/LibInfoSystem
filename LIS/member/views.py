@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
+import datetime
 
 # Create your views here.
 UG_cnt=0
@@ -90,3 +91,20 @@ def member_login(request):
 def member_logout(request):
     logout(request)
     return redirect("/member/login")
+
+def issue_book(request, book_id):
+    book = Book.objects.get(id=book_id)
+    print(request.user.id)
+    member = request.user.member
+
+    issued_books = member.book_set.all()
+    print(len(issued_books))
+    if member.book_limit > len(issued_books):
+        member.book_set.add(book)
+        member.save()
+        book.issue_date = datetime.date.today().isoformat()
+        book.issue_member = member
+        book.save()
+        return render(request, "member/profile.html", {'alert':"Issue Request Sent, Please wait for email confirmation"})
+    else:
+        return render(request, "member/profile.html", {'alert':"Maximum book issue limit reached!!"})
