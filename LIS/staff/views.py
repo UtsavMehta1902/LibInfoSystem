@@ -5,6 +5,7 @@ from book.models import Book
 from .models import *
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 clerk_cnt=0
 
@@ -79,11 +80,26 @@ def view_books(request):
         return redirect("/403")
 
 @login_required(login_url = '/staff_login')
+def view_issued_books(request):
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC" or user_name == "LIBR":
+        books = Book.objects.all()
+        books = books.exclude(issue_date = None)
+        navbar_extends = ""
+        if user_name == "LIBC":
+            navbar_extends = "staff/clerk_navbar.html"
+        else:
+            navbar_extends = "staff/librarian_navbar.html"
+        return render(request, "staff/view_issued_books.html", {'books':books, 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends})
+    else:
+        return redirect("/403")
+
+@login_required(login_url = '/staff_login')
 def view_members(request):
     user_name = request.user.username
     
     user_name = user_name.split("_")[0]
-    print(user_name)
     if user_name == "LIBC" or user_name == "LIBR":
         members = Member.objects.all()
         navbar_extends = ""
@@ -100,9 +116,8 @@ def delete_member(request, myid):
     user_name = user_name.split("_")[0]
 
     if user_name == "LIBR":   
-        member = Member.objects.filter(id=myid)
-        member.user.delete()
-        # member.delete()
+        members = Member.objects.filter(id=myid)
+        members.delete()
         return redirect("/staff/view_members")
     else:
         return redirect("/403")
