@@ -38,12 +38,12 @@
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
 
-                {% if book.issue_date is "" %}
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes</td>
-                    <td><a href="/member/reserve_book/{{book.id}}/" class="btn btn-reserve" onclick="return confirm('Are you sure you want to Reserve this book?')">Reserve</a></td>
-                {% else %}
+                {% if book.issue_date is "" or book.issue_date is null %}
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No</td>
                     <td><a href="/member/issue_book/{{book.id}}/" class="btn btn-issue" onclick="return confirm('Are you sure you want to Issue this book?')">Issue</a></td>
+                {% else %}
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes</td>
+                    <td><a href="/member/reserve_book/{{book.id}}/" class="btn btn-reserve" onclick="return confirm('Are you sure you want to Reserve this book?')">Reserve</a></td>                
                 {% endif %}
             </tr>
             {% endfor %}

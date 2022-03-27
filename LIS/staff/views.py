@@ -100,8 +100,9 @@ def delete_member(request, myid):
     user_name = user_name.split("_")[0]
 
     if user_name == "LIBR":   
-        members = Member.objects.filter(id=myid)
-        members.delete()
+        member = Member.objects.filter(id=myid)
+        member.user.delete()
+        # member.delete()
         return redirect("/staff/view_members")
     else:
         return redirect("/403")
