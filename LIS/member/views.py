@@ -1,5 +1,6 @@
 from operator import truediv
 import re
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
@@ -7,9 +8,6 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
-
-<<<<<<< HEAD
-=======
 from django.contrib.sites.shortcuts import get_current_site
 # from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -17,14 +15,13 @@ from .token import account_activation_token
 from django.template.loader import render_to_string
 import json
 from member.decrypter import decoder
-from django.core.mail.backends.smtp import EmailBackend
+from django.core.mail.backends.smtp import EmailMessage, EmailBackend
 # Create your views here.
 # UG_cnt=0
 # PG_cnt=0
 # RS_cnt=0
 # FAC_cnt=0
 
->>>>>>> a5c3af35b40252d23897b5df6705eaf9c615293a
 def member_home_page(request):
     return render(request, "member/home.html")
 
@@ -155,10 +152,6 @@ def member_logout(request):
 
 def issue_book(request, book_id):
     book = Book.objects.get(id=book_id)
-<<<<<<< HEAD
-=======
-    # print(request.user.id)
->>>>>>> a5c3af35b40252d23897b5df6705eaf9c615293a
     member = request.user.member
 
     issued_books = member.book_set.all()
