@@ -53,10 +53,10 @@ def member_registration(request):
             return render(request, "member/registration.html", {'passnotmatch':passnotmatch})
 
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
-        student = Member.objects.create(user=user, book_limit=limit, book_duration=duration)
+        member = Member.objects.create(user=user, book_limit=limit, book_duration=duration)
         return redirect('/member/login')
         user.save()
-        student.save()
+        member.save()
         alert = True
         return render(request, "member/registration.html", {'alert':alert})
     return render(request, "member/registration.html")
