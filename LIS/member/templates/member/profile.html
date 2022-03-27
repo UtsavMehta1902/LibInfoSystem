@@ -1,74 +1,102 @@
-{% extends 'member/member_navbar.html' %}
-
-{% block title %} Profile {% endblock %}
-
-{% block css %}
+{% extends 'member/member_navbar.html' %} {% block title %} Profile {% endblock%} {% block css %}
 <style>
-.profile{
-padding: 3%;
-margin-top: 3%;
-margin-bottom: 3%;
-border-radius: 0.5rem;
-background: rgb(81, 189, 171);
-}
 
+    .profile{
+        margin: 2% auto;
+    }
+
+  .row {
+    padding: 1.5%;
+    border-radius: 0.5rem;
+    background: rgb(112, 175, 165);
+  }
 </style>
-{% endblock %}
-{% block body %}
+{% endblock %} {% block body %}
+{% load static %}
 
 <div class="container profile">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="profile-tab">
-                    <div class="tab-pane">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label>Username:</label>
-                            </div>
-                            <div class="col-md-6">
-                                <p>{{user}}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label>Full Name:</label>
-                            </div>
-                            <div class="col-md-6">
-                                <p>{{user.get_full_name}}</p>
-                            </div>
-                        </div>
-                        <div class="row">    
-                            <div class="col-md-6">
-                                {% if is_faculty ==  True %}
-                                    <label>Faculty ID:</label>
-                                {% else %}
-                                    <label>Student Roll Number:</label>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <p>{{user.member.insti_id}}</p>
-                            </div>                            
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label>Email Address:</label>
-                            </div>
-                            <div class="col-md-6">
-                                <p>{{user.email}}</p>
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <!-- <a href="/edit_profile/" style="width: 9rem;" class="btn btn-outline-primary mt-3">Edit Profile</a> -->
-                </div>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="profile-tab">
+        <div class="tab-pane">
+          <div class="row">
+            <div class="col-md-6">
+              <label>Username:</label>
             </div>
-</div>
+            <div class="col-md-6">
+              <p>{{user}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Full Name:</label>
+            </div>
+            <div class="col-md-6">
+              <p>{{user.get_full_name}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {% if is_faculty == True %}
+              <label>Faculty ID:</label>
+              {% else %}
+              <label>Student Roll Number:</label>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <p>{{user.member.insti_id}}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label>Email Address:</label>
+            </div>
+            <div class="col-md-6">
+              <p>{{user.email}}</p>
+            </div>
+          </div>
+        </div>
+        <!-- <a href="/edit_profile/" style="width: 9rem;" class="btn btn-outline-primary mt-3">Edit Profile</a> -->
+      </div>
+    </div>
+  </div>
+  {% if issued_books|length > 0%}
+    <div class="container mt-4">
+        <h1 class="text-center"><u>Issued Books List</u></h1>
+        <table class="table table-hover" id="example">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>ISBN</th>
+                    <th>Title</th>
+                    <th>Author(s)</th>
+                    <th>Rack Number</th>
+                    <th>Return</th>  
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in issued_books %}
+                <tr>
+                    <td>{{forloop.counter}}.</td>
+                    <td>{{book.isbn}}</td>
+                    <td>{{book.title}}</td>
+                    <td>{{book.author}}</td>
+                    <td>{{book.rack_number}}</td>
+                    
+                    <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif%}
 </div>
 
 <script>
-    {% if alert %}
-    alert("{{alert}}");
-    {% endif %}
+  {% if alert %}
+  alert("{{alert}}");
+  {% endif %}
 </script>
 
 {% endblock %}

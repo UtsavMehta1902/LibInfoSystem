@@ -113,8 +113,8 @@ def delete_book(request, myid):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC":
-        books = Book.objects.filter(id=myid)
-        books.delete()
+        book = Book.objects.filter(id=myid)
+        book.delete()
         return redirect("/staff/view_books")
     else:
         return redirect("/403")

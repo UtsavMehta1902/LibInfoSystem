@@ -6,18 +6,11 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
 
-# Create your views here.
-# UG_cnt=0
-# PG_cnt=0
-# RS_cnt=0
-# FAC_cnt=0
-
 def member_home_page(request):
     return render(request, "member/home.html")
 
 def member_registration(request):
     if request.method == "POST":
-        # global UG_cnt, PG_cnt, RS_cnt, FAC_cnt
 
         member_type = request.POST['member_type']
         first_name = request.POST['first_name']
@@ -33,22 +26,18 @@ def member_registration(request):
 
         if member_type == "UG":
             username= "UG_" + str(insti_id)
-            # UG_cnt+=1
             limit=2
             duration=1
         elif member_type == "PG":
             username= "PG_" + str(insti_id)
-            # PG_cnt+=1
             limit=4
             duration=1
         elif member_type == "RS":
             username= "RS_" + str(insti_id)
-            # RS_cnt+=1
             limit=6
             duration=3
         elif member_type == "FAC":
             username= "FAC_" + str(insti_id)
-            # FAC_cnt+=1
             limit=10
             duration=6
 
@@ -73,8 +62,8 @@ def profile(request):
     if(user_name == "FAC"):
         is_faculty = True
     
-
-    return render(request, "member/profile.html", {'is_faculty': is_faculty})
+    issued_books = request.user.member.book_set.all()
+    return render(request, "member/profile.html", {'is_faculty': is_faculty, 'issued_books':issued_books})
 
 def view_books(request):
     books = Book.objects.all()
@@ -97,24 +86,21 @@ def member_login(request):
             return render(request, "member/login.html", {'alert':alert})
     return render(request, "member/login.html")
 
-# @login_required(login_url = '/member/login')
 def member_logout(request):
     logout(request)
     return redirect("/member/login")
 
 def issue_book(request, book_id):
     book = Book.objects.get(id=book_id)
-    print(request.user.id)
     member = request.user.member
 
     issued_books = member.book_set.all()
-    print(len(issued_books))
     if member.book_limit > len(issued_books):
         member.book_set.add(book)
         member.save()
         book.issue_date = datetime.date.today().isoformat()
         book.issue_member = member
         book.save()
-        return render(request, "member/profile.html", {'alert':"Issue Request Sent, Please wait for email confirmation"})
+        return render(request, "member/profile.html", {'alert':"Issue Request Sent, Please wait for email confirmation."})
     else:
         return render(request, "member/profile.html", {'alert':"Maximum book issue limit reached!!"})
