@@ -4,12 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
-<<<<<<< HEAD
 import datetime
-=======
 from django.core.mail import EmailMessage
 from django.conf import settings
->>>>>>> a1028af (email authentication in process)
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -161,7 +158,7 @@ def member_logout(request):
 
 def issue_book(request, book_id):
     book = Book.objects.get(id=book_id)
-    print(request.user.id)
+    # print(request.user.id)
     member = request.user.member
 
     issued_books = member.book_set.all()
@@ -174,4 +171,16 @@ def issue_book(request, book_id):
         book.save()
         return render(request, "member/profile.html", {'alert':"Issue Request Sent, Please wait for email confirmation"})
     else:
-        return render(request, "member/profile.html", {'alert':"Maximum book issue limit reached!!"})
+        return render(request, "member/profile.html", {'alert':"You cannot issue this book currently. You have reached your maximum book issue limit!!"})
+
+def reserve_book(request, book_id):
+    book = Book.objects.get(id = book_id)
+    member = request.user.member
+
+    if(member.reserved_book != None):
+        return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
+    else:
+        member.reserved_book = book
+        issue_datetime = datetime.datetime.now()
+        
+

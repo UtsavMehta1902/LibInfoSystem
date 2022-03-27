@@ -12,7 +12,7 @@ class Member(models.Model):
     reserved_book = models.ForeignKey(Book,on_delete=models.SET_NULL, null=True, default=None)
     # reminder = models.CharField(max_length=300, blank=True, default='')
     # issued_books = models.ManyToManyField(Book, related_name='issued_books', blank=True, default=None)
-    reserve_date = models.DateField(null = True)
+    reserve_datetime = models.DateTimeField(null = True)
     issue_history = models.CharField(max_length = 500, null = True)
 
 

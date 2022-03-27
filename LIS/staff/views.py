@@ -5,6 +5,7 @@ from book.models import Book
 from .models import *
 from django.contrib.auth.decorators import login_required
 
+
 # Create your views here.
 clerk_cnt=0
 
@@ -115,9 +116,8 @@ def delete_member(request, myid):
     user_name = user_name.split("_")[0]
 
     if user_name == "LIBR":   
-        member = Member.objects.filter(id=myid)
-        member.user.delete()
-        # member.delete()
+        members = Member.objects.filter(id=myid)
+        members.delete()
         return redirect("/staff/view_members")
     else:
         return redirect("/403")
