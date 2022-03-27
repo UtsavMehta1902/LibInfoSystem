@@ -5,9 +5,9 @@
 {% endblock %}
 {% block body %}
 <div class="container mt-4">
-    <h1 class="text-center"><u>Books</u></h1>
+    <h1 class="text-center"><u>Issued Books</u></h1>
     {% if books|length == 0 %}
-        <h3 class="text-center">No books available.</h3>
+        <h3 class="text-center">No issued books available.</h3>
     {% else %}
     <table class="table table-hover" id="example">
         <thead>
@@ -17,29 +17,28 @@
                 <th>Title</th>
                 <th>Author(s)</th>
                 <th>Rack Number</th>
+                <th>Currently Issued</th>
                 <th>Issue Date</th>
                 <th>Issued By</th>
                 <!-- <th>Reserved By</th> -->
-                {% if is_clerk %}
-                    <th>Delete</th> 
-                {% endif %} 
             </tr>
         </thead>
         <tbody>
             {% for book in books %}
             <tr>
-
                 <td>{{forloop.counter}}.</td>
                 <td>{{book.isbn}}</td>
                 <td>{{book.title}}</td>
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
+                {% if book.issue_date == null or book.issue_date == "" %}
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No</td>
+                {% else %}
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes</td>
+                {% endif %}
                 <td>{{book.issue_date}}</td>
                 <td>{{book.issue_member.user.get_full_name}}</td>
                 <!-- <td>{{null}}</td> -->
-                {% if is_clerk %}
-                    <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
-                {% endif %} 
             </tr>
             {% endfor %}
         </tbody>
