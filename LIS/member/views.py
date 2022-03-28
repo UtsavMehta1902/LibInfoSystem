@@ -3,8 +3,19 @@ from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
-# from django.conf import settings
-# from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+# from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+import json
+#from django.core.mail.backends.smtp import EmailMessage, EmailBackend
+# Create your views here.
+# UG_cnt=0
+# PG_cnt=0
+# RS_cnt=0
+# FAC_cnt=0
 
 def member_home_page(request):
     return render(request, "member/home.html")
@@ -115,7 +126,8 @@ def profile(request):
 def view_current_issues(request):
     issued_books = request.user.member.book_set.all()
     reserved_book = request.user.member.reserved_book
-    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book})
+    reserve_time = request.user.member.reserve_datetime
+    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time})
 
 
 def view_books(request):
@@ -152,6 +164,7 @@ def member_logout(request):
 def issue_book(request, book_id):
 
     book = Book.objects.get(id=book_id)
+    # print(request.user.id)
     member = request.user.member
 
     issued_books = member.book_set.all()
@@ -169,11 +182,21 @@ def reserve_book(request, book_id):
     book = Book.objects.get(id = book_id)
     member = request.user.member
 
-    if(member.reserved_book != None):
-        return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
+    if(book.issue_member == member):
+            return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you, as this book is currently issued to you!"})
+
+    if(member.reserved_book is not None):
+        
+        
+        if(member.reserved_book == book):
+            return render(request, "member/profile.html", {'alert':"You have already reserved this book. You cannot reserve it again at present."})
+
+        else: 
+            return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
+    
     else:
         member.reserved_book = book
-        member.reserve_datetime = datetime.datetime.now()
+        member.reserve_datetime = datetime.datetime.now(tz= 'Asia/Kolkata')
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
 

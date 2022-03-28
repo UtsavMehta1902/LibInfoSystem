@@ -74,12 +74,16 @@ def view_books(request, msg=""):
     user_name = user_name.split("_")[0]
     if user_name == "LIBC" or user_name == "LIBR":
         books = Book.objects.all()
+        books_reservations = []
+        for book in books:
+            books_reservations.append(sort_reservations(book))
         navbar_extends = ""
         if user_name == "LIBC":
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
-        return render(request, "staff/view_books.html", {'books': books, 'is_clerk': (user_name == "LIBC"), 'navbar_extends': navbar_extends, 'msg': msg})
+        books_details = zip(books, books_reservations)
+        return render(request, "staff/view_books.html", {'books_details':books_details, 'total_books': len(books), 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends})
     else:
         return redirect("/403")
 
