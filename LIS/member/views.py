@@ -213,7 +213,14 @@ def reserve_book(request, book_id):
         member.reserve_datetime = datetime.datetime.now()
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
-        
+
+
+@login_required(login_url = '/member/login')
+def view_issue_history(request):
+    issue_history = request.user.member.issuethread_set.all()
+    issue_history = issue_history.order_by("-issue_date")
+    return render(request, "member/view_issue_history.html", {'issue_history':issue_history})
+
 
 def return_book(request, book_id):
 
@@ -225,4 +232,5 @@ def return_book(request, book_id):
 
 def view_reminders(request):
     reminders = request.user.member.reminder_set.all()
+    reminders = reminders.order_by("-rem_datetime")
     return render(request, "member/view_reminders.html", {'reminders': reminders})

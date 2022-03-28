@@ -1,5 +1,4 @@
-from math import remainder
-from pyexpat import model
+
 from django.db import models
 from django.contrib.auth.models import User
 from book.models import Book
@@ -33,6 +32,3 @@ class IssueThread(models.Model):
     issue_date = models.DateField(null= True)
     return_date = models.DateField(null= True)
     penalty = models.FloatField(default= 0.0)
-
-
-

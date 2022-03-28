@@ -16,38 +16,36 @@
 </style>
 
 <div class="container mt-4">
-    <h1 class="text-center"><u>All Books List</u></h1>
+    <h1 class="text-center"><u>Reminders</u></h1>
+    {% if reminders|length == 0 %}
+        <h3 class="text-center">No current reminders!</h3>
+    {% else %}
     <table class="table table-hover" id="example">
         <thead>
             <tr>
                 <th>Sr.No</th>
-                <th>ISBN</th>
-                <th>Title</th>
-                <th>Author(s)</th>
-                <th>Rack Number</th>
-                <th>Currently Issued</th>
-                <th>Issue/Reserve</th>  
+                <th>Type</th>
+                <th>Penalty</th>
+                <th>Context</th>
+                <th>Book ISBN</th>
+                <th>Book Name</th>
+                <th>Date/Time</th>  
             </tr>
         </thead>
         <tbody>
-            {% for book in books %}
+            {% for reminder in reminders %}
             <tr>
                 <td>{{forloop.counter}}.</td>
-                <td>{{book.isbn}}</td>
-                <td>{{book.title}}</td>
-                <td>{{book.author}}</td>
-                <td>{{book.rack_number}}</td>
-
-                {% if book.issue_date is "" or book.issue_date is null %}
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No</td>
-                    <td><a href="/member/issue_book/{{book.id}}/" class="btn btn-issue" onclick="return confirm('Are you sure you want to Issue this book?')">Issue</a></td>
-                {% else %}
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes</td>
-                    <td><a href="/member/reserve_book/{{book.id}}/" class="btn btn-reserve" onclick="return confirm('Are you sure you want to Reserve this book?')">Reserve</a></td>                
-                {% endif %}
+                <td>{{reminder.rem_id}}</td>
+                <td>{{reminder.penalty}}</td>
+                <td>{{reminder.message}}</td>
+                <td>{{reminder.book.isbn}}</td>
+                <td>{{reminder.book.title}}</td>
+                <td>{{reminder.rem_datetime}}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% endif %}
     </div>
 {% endblock %}
