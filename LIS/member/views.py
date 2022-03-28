@@ -6,13 +6,13 @@ from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
-from django.core.mail import EmailMessage
+# from django.core.mail import EmailMessage
 from django.conf import settings
-from django.contrib.sites.shortcuts import get_current_site
+# from django.contrib.sites.shortcuts import get_current_site
 # from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
-import json
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# from django.template.loader import render_to_string
+# import json
 
 # from django.core.mail.backends.smtp import EmailMessage, EmailBackend
 # Create your views here.
@@ -138,11 +138,16 @@ def member_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        member_type = username.split("_")[0]
+        
+        if member_type != "UG" and member_type != "PG" and member_type != "RS" and member_type != "FAC":
+            # alert = True
+            return render(request, "member/login.html", {'alert': "The given username does not correspond to any member. Please enter a valid username."})
 
         if user is not None:
             login(request, user)
             if request.user.is_superuser:
-                return HttpResponse("You are not a Member!!")
+                return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
             else:
                 return redirect("/member/profile")
         else:
@@ -155,7 +160,7 @@ def member_logout(request):
     return redirect("/member/login")
 
 def issue_book(request, book_id):
-    
+
     book = Book.objects.get(id=book_id)
     member = request.user.member
 
