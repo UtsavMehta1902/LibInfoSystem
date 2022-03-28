@@ -1,11 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render, HttpResponse
-from member.models import Member, Reminder
+from member.models import Member, Reminder, IssueThread
 from book.models import Book
 import datetime
 from .models import *
 from django.contrib.auth.decorators import login_required
 from dateutil.relativedelta import relativedelta
+
 # Create your views here.
 clerk_cnt = 0
 

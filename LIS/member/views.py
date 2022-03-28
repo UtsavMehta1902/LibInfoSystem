@@ -12,6 +12,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 import json
+from dateutil.relativedelta import relativedelta
 
 def member_home_page(request):
     return render(request, "member/home.html")
@@ -125,6 +126,16 @@ def view_current_issues(request):
     issued_books = request.user.member.book_set.all()
     reserved_book = request.user.member.reserved_book
     reserve_time = request.user.member.reserve_datetime
+
+  
+    issued_books = issued_books.exclude(issue_date=None)
+
+    due_dates = []
+    for book in issued_books:
+        due_dates.append(book.issue_date + relativedelta(months=book.issue_member.book_duration))
+
+    book_details = zip(issued_books, due_dates)
+
     try:
         active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
     except(Exception):
@@ -133,7 +144,7 @@ def view_current_issues(request):
         reservation_status = "Active"
     else:
         reservation_status ="Pending"
-    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
+    return render(request, "member/view_issued_books.html", {'total_books': len(issued_books), 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status, 'book_details':book_details})
 
 
 

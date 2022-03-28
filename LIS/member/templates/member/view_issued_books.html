@@ -15,7 +15,7 @@
     }
 </style>
 
-{% if issued_books|length > 0 %}
+{% if total_books > 0 %}
     <div class="container mt-4">
         <h1 class="text-center"><u>Currently Issued Books</u></h1>
         <table class="table table-hover" id="example">
@@ -31,14 +31,14 @@
                 </tr>
             </thead>
             <tbody>
-                {% for book in issued_books %}
+                {% for book, due_date in book_details %}
                 <tr>
                     <td>{{forloop.counter}}.</td>
                     <td>{{book.isbn}}</td>
                     <td>{{book.title}}</td>
                     <td>{{book.author}}</td>
                     <td>{{book.issue_date}}</td>
-                    <td>{{book.due_date}}</td>
+                    <td>{{due_date}}</td>
                     {% if book.return_requested %}
                     <td>Request Sent</td>
                     {% else %}
