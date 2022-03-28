@@ -8,13 +8,6 @@ urlpatterns = [
     path("view_books/", views.view_books, name="view_books"),
     path("logout/", views.member_logout, name="logout"),
     path("issue_book/<int:book_id>/", views.issue_book, name="issue_book"),
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
     path("view_issued_books/", views.view_current_issues, name="view_current_issues"),
->>>>>>> 0c82a91 (showed member's issued and reserved books)
-    # path('activate/<uidb64>/<token>', views.activate, name='activate'), 
->>>>>>> bf2fc8dbe52a34f20685b9b839d33ef5db8c77be
     path('', views.member_home_page, name="home"),
 ]

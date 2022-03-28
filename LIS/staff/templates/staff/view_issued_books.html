@@ -37,7 +37,7 @@
                     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yes</td>
                 {% endif %}
                 <td>{{book.issue_date}}</td>
-                <td>{{book.issue_member.user.get_full_name}}</td>
+                <td>{{book.issue_member.user.username}}</td>
                 <!-- <td>{{null}}</td> -->
             </tr>
             {% endfor %}

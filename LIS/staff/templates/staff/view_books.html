@@ -35,7 +35,7 @@
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
                 <td>{{book.issue_date}}</td>
-                <td>{{book.issue_member.user.get_full_name}}</td>
+                <td>{{book.issue_member.user.username}}</td>
                 <!-- <td>{{null}}</td> -->
                 {% if is_clerk %}
                     <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
