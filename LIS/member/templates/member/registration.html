@@ -58,11 +58,10 @@
 </form>
 {% endblock %}
 {% block js %}
-<!-- <script>
-    {% if alert %}
-    alert("Registration Successfull.")
-    document.location = "/student_login"
+<script>
+    {% if message %}
+    alert("{{ message }}");
     {% endif %}
-</script> -->
+</script>
 {% endblock %}
 

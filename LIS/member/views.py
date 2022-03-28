@@ -68,9 +68,8 @@ def member_registration(request):
         # email_from = settings.EMAIL_HOST_USER
         # recipient_list = [email,]
         # send_mail( subject, message, email_from, recipient_list, fail_silently=False)
-        message = f"Your username is {username}. Please remember this for future purposes."
-        return render(request, 'member/login.html', {'message': message})
-        return render(request, "member/registration.html")  
+        message = f"Registration Completed Successfully! Your username is {username}. Please remember this for future purposes."
+        return render(request, "member/registration.html", {'message': message})
     return render(request, "member/registration.html")
 
         # connection = EmailBackend(host='smtp.gmail.com',
@@ -153,14 +152,18 @@ def member_login(request):
 
         if user is not None:
             login(request, user)
+            print('a')
             if request.user.is_superuser:
-                
+                print('b')
                 return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
             else:
+                print('c')
                 return redirect("/member/profile")
         else:
+            print('d')
             alert = "The given username does not correspond to any member. Please enter a valid username."
             return render(request, "member/login.html", {'alert':alert})
+    print('e')
     return render(request, "member/login.html")
 
 def member_logout(request):

@@ -34,7 +34,7 @@
                 <td>{{member.reserved_book.isbn}}</td>
                 <td>{{member.reserved_book.isbn}}</td>
                 {% if is_librarian %}
-                    <td><a href="/staff/delete_member/{{member.user.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this member?')">Delete</a></td>
+                    <td><a href="/staff/delete_member/{{member.user_id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this member?')">Delete</a></td>
                 {% endif %}
             </tr>
             {% endfor %}
