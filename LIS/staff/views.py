@@ -139,15 +139,16 @@ def staff_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        user_name = user.username.split('_')[0]
 
         if user is not None:
             login(request, user)
             navbar_extends = ""
-            if user.username.split('_')[0] == "LIBC":
+            if user_name == "LIBC":
                 navbar_extends = "staff/clerk_navbar.html"
             else:
                 navbar_extends = "staff/librarian_navbar.html"
-            return render(request, "staff/profile.html", {'navbar_extends': navbar_extends})
+            return render(request, "staff/profile.html", {'user_name': user_name, 'navbar_extends': navbar_extends})
         else:
             alert = True
             return render(request, "staff/login.html", {'alert':alert})
