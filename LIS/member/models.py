@@ -29,6 +29,6 @@ class Reminder(models.Model):
     penalty = models.FloatField(default = 0.0)
     book  = models.OneToOneField(Book, on_delete = models.CASCADE)
     member = models.ForeignKey(Member, on_delete = models.CASCADE)
-    date_of_rem = models.DateField(null = True)
+    rem_datetime = models.DateTimeField(null = True)
 
     
