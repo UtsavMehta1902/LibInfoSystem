@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render,HttpResponse
+from django.shortcuts import redirect,render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
@@ -181,28 +181,18 @@ def issue_book(request, book_id):
 def reserve_book(request, book_id):
     book = Book.objects.get(id = book_id)
     member = request.user.member
-
     if(book.issue_member == member):
             return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you, as this book is currently issued to you!"})
 
-    if(member.reserved_book is not None):
-        
-        
+    if(member.reserved_book is not None): 
         if(member.reserved_book == book):
             return render(request, "member/profile.html", {'alert':"You have already reserved this book. You cannot reserve it again at present."})
-
         else: 
             return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
-    
     else:
         member.reserved_book = book
         member.reserve_datetime = datetime.datetime.now(tz= 'Asia/Kolkata')
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
+        
 
-def return_book(request, book_id):
-    book = Book.objects.get(id = book_id)
-    book.return_requested = True
-    book.save()
-
-    return render(request, "member/profile.html", {'alert':"Your return request has been sent. Please wait for confirmation."})
