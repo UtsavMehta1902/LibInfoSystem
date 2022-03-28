@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect, render,HttpResponse
+from django.shortcuts import redirect,render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
