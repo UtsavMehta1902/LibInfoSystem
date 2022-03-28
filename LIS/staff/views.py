@@ -6,10 +6,12 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-clerk_cnt=0
+clerk_cnt = 0
+
 
 def staff_home_page(request):
     return render(request, "staff/home.html")
+
 
 def staff_registration(request):
 
@@ -25,17 +27,18 @@ def staff_registration(request):
         user_name = ""
 
         if staff_type == "LIBRARIAN":
-            user_name= "LIBR_0"
+            user_name = "LIBR_0"
 
         elif staff_type == "LIBRARY CLERK":
-            user_name= "LIBC_" + str(clerk_cnt)
-            clerk_cnt+=1
+            user_name = "LIBC_" + str(clerk_cnt)
+            clerk_cnt += 1
 
         if password != confirm_password:
             passnotmatch = True
-            return render(request, "staff/staff_registration.html", {'passnotmatch':passnotmatch})
+            return render(request, "staff/staff_registration.html", {'passnotmatch': passnotmatch})
 
-        user = User.objects.create_user(username=user_name, email=email, password=password,first_name=first_name, last_name=last_name)
+        user = User.objects.create_user(
+            username=user_name, email=email, password=password, first_name=first_name, last_name=last_name)
         staff = Staff.objects.create(user=user)
         user.save()
         staff.save()
@@ -43,28 +46,30 @@ def staff_registration(request):
 
     return render(request, "staff/staff_registration.html")
 
-    
-@login_required(login_url = '/staff_login')
+
+@login_required(login_url='/staff_login')
 def add_book(request):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC":
         if request.method == "POST":
-            title = request.POST.get('title',"")
+            title = request.POST.get('title', "")
             print(title)
-            author = request.POST.get('author',"")
-            isbn = request.POST.get('isbn',0)
-            rack_number = request.POST.get('rack_number',"")
-            books = Book.objects.create(title=title, author=author, isbn=isbn, rack_number=rack_number)
+            author = request.POST.get('author', "")
+            isbn = request.POST.get('isbn', 0)
+            rack_number = request.POST.get('rack_number', "")
+            books = Book.objects.create(
+                title=title, author=author, isbn=isbn, rack_number=rack_number)
             books.save()
             alert = True
-            return render(request, "staff/add_book.html", {'alert':alert})
-        return render(request, "staff/add_book.html")  
+            return render(request, "staff/add_book.html", {'alert': alert})
+        return render(request, "staff/add_book.html")
     else:
         return redirect("/403")
 
-@login_required(login_url = '/staff_login')
-def view_books(request):
+
+@login_required(login_url='/staff_login')
+def view_books(request, msg=""):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC" or user_name == "LIBR":
@@ -74,30 +79,32 @@ def view_books(request):
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
-        return render(request, "staff/view_books.html", {'books':books, 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends})
+        return render(request, "staff/view_books.html", {'books': books, 'is_clerk': (user_name == "LIBC"), 'navbar_extends': navbar_extends, 'msg': msg})
     else:
         return redirect("/403")
 
-@login_required(login_url = '/staff_login')
+
+@login_required(login_url='/staff_login')
 def view_issued_books(request):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC" or user_name == "LIBR":
         books = Book.objects.all()
-        books = books.exclude(issue_date = None)
+        books = books.exclude(issue_date=None)
         navbar_extends = ""
         if user_name == "LIBC":
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
-        return render(request, "staff/view_issued_books.html", {'books':books, 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends})
+        return render(request, "staff/view_issued_books.html", {'books': books, 'is_clerk': (user_name == "LIBC"), 'navbar_extends': navbar_extends})
     else:
         return redirect("/403")
 
-@login_required(login_url = '/staff_login')
+
+@login_required(login_url='/staff_login')
 def view_members(request):
     user_name = request.user.username
-    
+
     user_name = user_name.split("_")[0]
     if user_name == "LIBC" or user_name == "LIBR":
         members = Member.objects.all()
@@ -106,32 +113,38 @@ def view_members(request):
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
-        return render(request, "staff/view_members.html", {'members':members, 'is_librarian' : (user_name == "LIBR"), 'navbar_extends': navbar_extends})
+        return render(request, "staff/view_members.html", {'members': members, 'is_librarian': (user_name == "LIBR"), 'navbar_extends': navbar_extends})
     else:
         return redirect("/403")
+
 
 def delete_member(request, myid):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
 
-    if user_name == "LIBR":   
+    if user_name == "LIBR":
         members = Member.objects.filter(id=myid)
         members.delete()
         return redirect("/staff/view_members")
     else:
         return redirect("/403")
 
-@login_required(login_url = '/staff_login')
+
+@login_required(login_url='/staff_login')
 def delete_book(request, myid):
 
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC":
-        book = Book.objects.filter(id=myid)
-        book.delete()
-        return redirect("/staff/view_books")
+        book = Book.objects.get(id=myid)
+        if book.issue_date == None or book.issue_date == "":
+            book.delete()
+            return redirect("/staff/view_books")
+        else:
+            return  view_books(request, "Cannot delete a book that is issued!")
     else:
         return redirect("/403")
+
 
 def staff_login(request):
     if request.method == "POST":
@@ -154,10 +167,11 @@ def staff_login(request):
             return render(request, "staff/profile.html", {'user_name': user_name, 'navbar_extends': navbar_extends})
         else:
             alert = True
-            return render(request, "staff/login.html", {'alert':alert})
+            return render(request, "staff/login.html", {'alert': alert})
     return render(request, "staff/login.html")
 
-@login_required(login_url = '/staff_login')
+
+@login_required(login_url='/staff_login')
 def profile(request):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
@@ -168,15 +182,19 @@ def profile(request):
     else:
         return redirect("/403")
 
+
 def Logout(request):
     logout(request)
-    return redirect ("/staff/staff_login")
+    return redirect("/staff/staff_login")
+
 
 def approve_return_request(request):
     books = Book.objects.filter(return_requested=True)
-    return render(request, "staff/approve_return_request.html", {'books':books, 'navbar_extends': "staff/clerk_navbar.html"})
+    return render(request, "staff/approve_return_request.html", {'books': books, 'navbar_extends': "staff/clerk_navbar.html"})
 
 # TODO: ADD PENALTY FUNCTIONALITY ONCE NOTIFICATIONS IS DONE
+
+
 def return_book_approved(request, bookid):
     book = Book.objects.get(id=bookid)
     book.issue_date = None

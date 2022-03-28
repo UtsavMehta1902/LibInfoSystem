@@ -46,4 +46,10 @@
     </table>
     {% endif %}
     </div>
+
+    <script>
+        {% if msg %}
+            alert("{{msg}}");
+        {% endif %}
+    </script>
 {% endblock %}
