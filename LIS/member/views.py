@@ -126,7 +126,8 @@ def profile(request):
 def view_current_issues(request):
     issued_books = request.user.member.book_set.all()
     reserved_book = request.user.member.reserved_book
-    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book})
+    reserve_time = request.user.member.reserve_datetime
+    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time})
 
 
 def view_books(request):
@@ -181,13 +182,24 @@ def reserve_book(request, book_id):
     book = Book.objects.get(id = book_id)
     member = request.user.member
 
-    if(member.reserved_book != None):
-        return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
+    if(book.issue_member == member):
+            return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you, as this book is currently issued to you!"})
+
+    if(member.reserved_book is not None):
+        
+        
+        if(member.reserved_book == book):
+            return render(request, "member/profile.html", {'alert':"You have already reserved this book. You cannot reserve it again at present."})
+
+        else: 
+            return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
+    
     else:
         member.reserved_book = book
-        member.reserve_datetime = datetime.datetime.now()
+        member.reserve_datetime = datetime.datetime.now(tz= 'Asia/Kolkata')
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
+<<<<<<< HEAD
 
 def return_book(request, book_id):
     book = Book.objects.get(id = book_id)
@@ -195,3 +207,7 @@ def return_book(request, book_id):
     book.save()
 
     return render(request, "member/profile.html", {'alert':"Your return request has been sent. Please wait for confirmation."})
+=======
+        
+
+>>>>>>> 6450195 (reserve function almost implemented)

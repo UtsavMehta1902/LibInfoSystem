@@ -45,7 +45,7 @@
 {% endif%}
 
 
-{% if reserved_books|length > 0 %}
+{% if reserved_book != None %}
     <div class="container mt-4">
         <h1 class="text-center"><u>Currently Reserved Book</u></h1>
         <table class="table table-hover" id="example">
@@ -55,24 +55,22 @@
                     <th>ISBN</th>
                     <th>Title</th>
                     <th>Author(s)</th>
-                    <th>Issue Date</th>
-                    <th>Due Date</th>
-                    <!-- <th>Return</th>  -->
+                    <th>Reserve Date and Time</th>
+                    <th>Reservation Status</th>
+                    <th>Cancel Reservation</th> 
                 </tr>
             </thead>
             <tbody>
-                {% for book in reserved_books %}
                 <tr>
-                    <td>{{forloop.counter}}.</td>
-                    <td>{{book.isbn}}</td>
-                    <td>{{book.title}}</td>
-                    <td>{{book.author}}</td>
-                    <td>{{book.issue_date}}</td>
-                    <td>{{book.due_date}}</td>
+                    <td>{{1}}.</td>
+                    <td>{{reserved_book.isbn}}</td>
+                    <td>{{reserved_book.title}}</td>
+                    <td>{{reserved_book.author}}</td>
+                    <td>{{reserve_time}}</td>
+                    <!-- <td>{{reserved_book.due_date}}</td> -->
                     <!-- <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td> -->
-
                 </tr>
-                {% endfor %}
+          
             </tbody>
         </table>
     </div>
@@ -82,6 +80,6 @@
         <br>
         <h4 class="text-center">You do not have any book reserved currently.</h4>
     </div>
-{% endif%}
+{% endif %}
  
 {% endblock %}
