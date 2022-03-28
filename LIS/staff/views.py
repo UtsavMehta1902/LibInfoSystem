@@ -169,3 +169,6 @@ def Logout(request):
     logout(request)
     return redirect ("/staff/staff_login")
 
+def approve_return_request(request):
+    books = Book.objects.get(return_requested=True)
+    return render(request, "staff/approve_return_request.html", {'books':books, 'navbar_extends': "staff/clerk_navbar.html"})

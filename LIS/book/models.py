@@ -10,14 +10,9 @@ class Book(models.Model):
     rack_number = models.CharField(max_length= 10)
     issue_date = models.DateField(null= True)
     date_added = models.DateField(null=True)
-    
+    return_requested = models.BooleanField(default=False)
     # #field visible only to the clerks and librarian in book display
     issue_member = models.ForeignKey("member.Member", on_delete = models.SET_NULL, null = True)
 
-   
     def __str__(self):
         return str(self.title) + " [ISBN: "+str(self.isbn)+']'
-
-
-
-
