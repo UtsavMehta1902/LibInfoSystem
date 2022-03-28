@@ -6,7 +6,7 @@
 {% block body %}
 <div class="container mt-4">
     <h1 class="text-center"><u>Books</u></h1>
-    {% if books|length == 0 %}
+    {% if total_books == 0 %}
         <h3 class="text-center">No books available.</h3>
     {% else %}
     <table class="table table-hover" id="example">
@@ -19,24 +19,41 @@
                 <th>Rack Number</th>
                 <th>Issue Date</th>
                 <th>Issued By</th>
-                <!-- <th>Reserved By</th> -->
+                <th>Reserved By</th>
                 {% if is_clerk %}
                     <th>Delete</th> 
                 {% endif %} 
             </tr>
         </thead>
         <tbody>
-            {% for book in books %}
+            {% for book, book_reservations in books_details %}
             <tr>
 
-                <td>{{forloop.counter}}.</td>
+                <td>{{forloop.counter}}</td>
                 <td>{{book.isbn}}</td>
                 <td>{{book.title}}</td>
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
                 <td>{{book.issue_date}}</td>
+<<<<<<< HEAD
                 <td>{{book.issue_member.user.username}}</td>
                 <!-- <td>{{null}}</td> -->
+=======
+                <td>{{book.issue_member.user.get_full_name}}</td>
+                <td>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Reserved by
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% for member in book_reservations %}
+                                <li><a class="dropdown-item" >{{member.user.get_full_name}}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    &nbsp;&nbsp;&nbsp;
+                </td>
+>>>>>>> f5c668d (added Reserved by column and fixed profile redirect)
                 {% if is_clerk %}
                     <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
                 {% endif %} 

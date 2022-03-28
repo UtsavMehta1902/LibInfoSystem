@@ -10,7 +10,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 import json
-from django.core.mail.backends.smtp import EmailMessage, EmailBackend
+#from django.core.mail.backends.smtp import EmailMessage, EmailBackend
 # Create your views here.
 # UG_cnt=0
 # PG_cnt=0
