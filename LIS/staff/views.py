@@ -62,7 +62,7 @@ def add_book(request):
             books = Book.objects.create(
                 title=title, author=author, isbn=isbn, rack_number=rack_number)
             books.save()
-            alert = True
+            alert = "The book with the given details has been successfully added to the portal!"
             return render(request, "staff/add_book.html", {'alert': alert})
         return render(request, "staff/add_book.html")
     else:

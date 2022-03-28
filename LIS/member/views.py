@@ -3,7 +3,7 @@ from django.shortcuts import redirect,render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
-import pytz
+
 from django.core.mail import EmailMessage
 from django.conf import settings
 # import pytz
@@ -136,6 +136,15 @@ def view_current_issues(request):
     return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
 
 
+
+@login_required(login_url = '/member/login')
+def view_issue_history(request):
+    issue_history = request.user.member.issuethread_set.all()
+    issue_history = issue_history.order_by("-issue_date")
+    return render(request, "member/view_issue_history.html", {'issue_history':issue_history})
+
+
+
 @login_required(login_url = '/member/login')
 def view_books(request):
     books = Book.objects.all()
@@ -155,18 +164,18 @@ def member_login(request):
 
         if user is not None:
             login(request, user)
-            print('a')
+         
             if request.user.is_superuser:
-                print('b')
+               
                 return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
             else:
-                print('c')
+              
                 return redirect("/member/profile")
         else:
-            print('d')
+         
             alert = "The given username does not correspond to any member. Please enter a valid username."
             return render(request, "member/login.html", {'alert':alert})
-    print('e')
+   
     return render(request, "member/login.html")
 
 

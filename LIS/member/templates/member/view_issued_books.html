@@ -39,8 +39,11 @@
                     <td>{{book.author}}</td>
                     <td>{{book.issue_date}}</td>
                     <td>{{book.due_date}}</td>
+                    {% if book.return_requested %}
+                    <td>Request Sent</td>
+                    {% else %}
                     <td><a href="/member/return_book/{{book.id}}/" class="btn btn-return" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td>
-
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
