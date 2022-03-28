@@ -200,9 +200,9 @@ def Logout(request):
     return redirect("/staff/staff_login")
 
 
-def approve_return_request(request):
+def approve_return_request(request, msg=""):
     books = Book.objects.filter(return_requested=True)
-    return render(request, "staff/approve_return_request.html", {'books': books, 'navbar_extends': "staff/clerk_navbar.html"})
+    return render(request, "staff/approve_return_request.html", {'books': books, 'navbar_extends': "staff/clerk_navbar.html", 'alert': msg})
 
 # TODO: ADD PENALTY FUNCTIONALITY ONCE NOTIFICATIONS IS DONE
 
@@ -213,4 +213,4 @@ def return_book_approved(request, bookid):
     book.issue_member = None
     book.return_requested = False
     book.save()
-    return render(request, "staff/approve_return_request.html", {'alert': "Book return approved.", 'navbar_extends': "staff/clerk_navbar.html"})
+    return approve_return_request(request, "Book return approved successfully!")
