@@ -5,7 +5,6 @@ from book.models import Book
 from .models import *
 from django.contrib.auth.decorators import login_required
 
-
 # Create your views here.
 clerk_cnt=0
 
@@ -170,5 +169,14 @@ def Logout(request):
     return redirect ("/staff/staff_login")
 
 def approve_return_request(request):
-    books = Book.objects.get(return_requested=True)
+    books = Book.objects.filter(return_requested=True)
     return render(request, "staff/approve_return_request.html", {'books':books, 'navbar_extends': "staff/clerk_navbar.html"})
+
+# TODO: ADD PENALTY FUNCTIONALITY ONCE NOTIFICATIONS IS DONE
+def return_book_approved(request, bookid):
+    book = Book.objects.get(id=bookid)
+    book.issue_date = None
+    book.issue_member = None
+    book.return_requested = False
+    book.save()
+    return render(request, "staff/approve_return_request.html", {'alert': "Book return approved.", 'navbar_extends': "staff/clerk_navbar.html"})
