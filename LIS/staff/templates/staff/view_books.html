@@ -35,10 +35,6 @@
                 <td>{{book.author}}</td>
                 <td>{{book.rack_number}}</td>
                 <td>{{book.issue_date}}</td>
-<<<<<<< HEAD
-                <td>{{book.issue_member.user.username}}</td>
-                <!-- <td>{{null}}</td> -->
-=======
                 <td>{{book.issue_member.user.get_full_name}}</td>
                 <td>
                     <li class="nav-item dropdown">
@@ -53,7 +49,6 @@
                     </li>
                     &nbsp;&nbsp;&nbsp;
                 </td>
->>>>>>> f5c668d (added Reserved by column and fixed profile redirect)
                 {% if is_clerk %}
                     <td><a href="/staff/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
                 {% endif %} 

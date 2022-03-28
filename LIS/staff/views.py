@@ -68,6 +68,13 @@ def add_book(request):
         return redirect("/403")
 
 
+def sort_reservations(book):
+    book_reservations = []
+    for member in book.member_set.all().order_by('reserve_datetime'):
+        book_reservations.append(member)
+    return book_reservations
+
+    
 @login_required(login_url='/staff_login')
 def view_books(request, msg=""):
     user_name = request.user.username
