@@ -102,7 +102,7 @@ Information System {% endblock %} {% block css %} {% endblock %}
 
 <div class="container">
   <h1 class="text-center"><u>Issued Books</u></h1>
-  {% if books|length == 0 %}
+  {% if total_books == 0 %}
   <h3 class="text-center">No issued books available.</h3>
   {% else %}
   <table class="table table-hover" id="example">
@@ -111,21 +111,23 @@ Information System {% endblock %} {% block css %} {% endblock %}
         <th><h1>Sr.No</h1></th>
         <th><h1>ISBN</h1></th>
         <th><h1>Title</h1></th>
-        <th><h1>Author(s)</h1></th>
         <th><h1>Number</h1></th>
         <th><h1>Currently Issued</h1></th>
         <th><h1>Issue Date</h1></th>
         <th><h1>Issued By</h1></th>
+        <th><h1>Due Date</h1></th>
+        {% if not is_clerk %}
+          <th><h1>Action</h1></th>
+        {% endif %}
         <!-- <th>Reserved By</th> -->
       </tr>
     </thead>
     <tbody>
-      {% for book in books %}
+      {% for book, due_date in books %}
       <tr>
         <td>{{forloop.counter}}.</td>
         <td>{{book.isbn}}</td>
         <td>{{book.title}}</td>
-        <td>{{book.author}}</td>
         <td>{{book.rack_number}}</td>
         {% if book.issue_date == null or book.issue_date == "" %}
         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No</td>
@@ -134,11 +136,21 @@ Information System {% endblock %} {% block css %} {% endblock %}
         {% endif %}
         <td>{{book.issue_date}}</td>
         <td>{{book.issue_member.user.username}}</td>
-        <!-- <td>{{null}}</td> -->
+        <td>{{due_date}}</td>
+        {% if not is_clerk %}
+          <td>
+            <a href="/staff/send_reminder/{{book.id}}" class="btn btn-primary">Remind</a>
+          </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% endif %}
 </div>
+<script>
+  {% if msg %}
+  alert("{{msg}}");
+  {% endif %}
+</script>
 {% endblock %}

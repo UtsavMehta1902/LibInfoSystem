@@ -1,10 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render, HttpResponse
-from member.models import Member
+from member.models import Member, Reminder
 from book.models import Book
+import datetime
 from .models import *
 from django.contrib.auth.decorators import login_required
-
+from dateutil.relativedelta import relativedelta
 # Create your views here.
 clerk_cnt = 0
 
@@ -96,18 +97,24 @@ def view_books(request, msg=""):
 
 
 @login_required(login_url='/staff_login')
-def view_issued_books(request):
+def view_issued_books(request, msg=""):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC" or user_name == "LIBR":
         books = Book.objects.all()
         books = books.exclude(issue_date=None)
+
+        due_dates = []
+        for book in books:
+            due_dates.append(book.issue_date + relativedelta(months=book.issue_member.book_duration))
+
+        book_details = zip(books, due_dates)
         navbar_extends = ""
         if user_name == "LIBC":
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
-        return render(request, "staff/view_issued_books.html", {'books': books, 'is_clerk': (user_name == "LIBC"), 'navbar_extends': navbar_extends})
+        return render(request, "staff/view_issued_books.html", {'books': book_details, 'total_books': len(books), 'is_clerk': (user_name == "LIBC"), 'navbar_extends': navbar_extends, 'msg': msg})
     else:
         return redirect("/403")
 
@@ -214,3 +221,10 @@ def return_book_approved(request, bookid):
     book.return_requested = False
     book.save()
     return approve_return_request(request, "Book return approved successfully!")
+
+
+def send_reminder(request, bookid):
+    book_obj = Book.objects.get(id=bookid)
+    reminder = Reminder.objects.create(rem_id = 'O', message = "Your book is due to be returned!", penalty=0, book=book_obj, member=book_obj.issue_member, rem_datetime=datetime.datetime.now())
+    reminder.save()
+    return view_issued_books(request, "Reminder sent successfully!")

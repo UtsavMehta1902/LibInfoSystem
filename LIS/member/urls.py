@@ -12,5 +12,6 @@ urlpatterns = [
     path("view_issued_books/", views.view_current_issues, name="view_current_issues"),
     # path('activate/<uidb64>/<token>', views.activate, name='activate'), 
     path("return_book/<int:book_id>/", views.return_book, name="return_book"),
+    path("view_reminders/", views.view_reminders, name="view_reminders"),
     path('', views.member_home_page, name="home"),
 ]

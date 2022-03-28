@@ -3,20 +3,14 @@ from django.shortcuts import redirect,render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
+import pytz
 from django.core.mail import EmailMessage
 from django.conf import settings
-import pytz
 from django.contrib.sites.shortcuts import get_current_site
 # from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 import json
-#from django.core.mail.backends.smtp import EmailMessage, EmailBackend
-# Create your views here.
-# UG_cnt=0
-# PG_cnt=0
-# RS_cnt=0
-# FAC_cnt=0
 
 def member_home_page(request):
     return render(request, "member/home.html")
@@ -148,12 +142,6 @@ def view_books(request):
 
 
 def member_login(request):
-    # prev_page_path = request.META['HTTP_REFERER']
-    # prev_page_path = prev_page_path.split("next=")[-1]
-    # print(prev_page_path)
-    # if(prev_page_path == "/member/profile/"):
-
-
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -179,7 +167,6 @@ def member_login(request):
             return render(request, "member/login.html", {'alert':alert})
     print('e')
     return render(request, "member/login.html")
-
 
 
 @login_required(login_url = '/member/login')
@@ -225,8 +212,14 @@ def reserve_book(request, book_id):
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
         
+
 def return_book(request, book_id):
     book = Book.objects.get(id = book_id)
     book.return_requested = True
     book.save()
     return render(request, "member/profile.html", {'alert':"Your return request has been sent! Please wait for confirmation."})
+
+
+def view_reminders(request):
+    reminders = request.user.member.reminder_set.all()
+    return render(request, "member/view_reminders.html", {'reminders': reminders})
