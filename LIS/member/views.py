@@ -19,8 +19,10 @@ from django.views.decorators.cache import cache_control
 # RS_cnt=0
 # FAC_cnt=0
 
+
 def member_home_page(request):
     return render(request, "member/home.html")
+
 
 def member_registration(request):
     if request.method == "POST":
@@ -112,40 +114,6 @@ def member_registration(request):
 #     else:
 #         return HttpResponse('Activation link is invalid!')
 
-@login_required(login_url = '/member/login')
-@cache_control(no_cache=True, must_revalidate=True, no_store = True)
-def profile(request):
-    prev_page_path = request.META['HTTP_REFERER']
-    # prev_page_path = prev_page_path.split("next=")[-1]
-    print(prev_page_path)
-    user_name = request.user.username
-    user_name = user_name.split("_")[0]
-    is_faculty = False
-    if(user_name == "FAC"):
-        is_faculty = True
-    
-    issued_books = request.user.member.book_set.all()
-    return render(request, "member/profile.html", {'is_faculty': is_faculty, 'issued_books':issued_books})
-
-@login_required(login_url = '/member/login')
-@cache_control(no_cache=True, must_revalidate=True, no_store = True)
-def view_current_issues(request):
-    issued_books = request.user.member.book_set.all()
-    reserved_book = request.user.member.reserved_book
-    reserve_time = request.user.member.reserve_datetime
-    active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
-    if (active_member.user.username == request.user.username):
-        reservation_status = "Active"
-    else:
-        reservation_status ="Pending"
-    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
-
-
-@login_required(login_url = '/member/login')
-@cache_control(no_cache=True, must_revalidate=True, no_store = True)
-def view_books(request):
-    books = Book.objects.all()
-    return render(request, "member/view_books.html", {'books' :books})
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store = True)
@@ -183,12 +151,22 @@ def member_login(request):
     return render(request, "member/login.html")
 
 
-
-@cache_control(no_cache=True, must_revalidate=True, no_store = True)
 @login_required(login_url = '/member/login')
-def member_logout(request):
-    logout(request)
-    return redirect("/member/login")
+def profile(request):
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    is_faculty = False
+    if(user_name == "FAC"):
+        is_faculty = True
+    
+    issued_books = request.user.member.book_set.all()
+    return render(request, "member/profile.html", {'is_faculty': is_faculty, 'issued_books':issued_books})
+
+
+def view_books(request):
+    books = Book.objects.all()
+    return render(request, "member/view_books.html", {'books' :books})
+
 
 
 @login_required(login_url = '/member/login')
@@ -212,7 +190,18 @@ def issue_book(request, book_id):
 
 
 @login_required(login_url = '/member/login')
-@cache_control(no_cache=True, must_revalidate=True, no_store = True)
+def view_current_issues(request):
+    issued_books = request.user.member.book_set.all()
+    reserved_book = request.user.member.reserved_book
+    reserve_time = request.user.member.reserve_datetime
+    active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
+    if (active_member.user.username == request.user.username):
+        reservation_status = "Active"
+    else:
+        reservation_status ="Pending"
+    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
+
+
 def reserve_book(request, book_id):
     book = Book.objects.get(id = book_id)
     member = request.user.member
@@ -226,13 +215,11 @@ def reserve_book(request, book_id):
             return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
     else:
         member.reserved_book = book
-<<<<<<< HEAD
         member.reserve_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
         
 
-=======
         member.reserve_datetime = datetime.datetime.now()
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
@@ -246,4 +233,9 @@ def return_book(request, book_id):
     book.save()
 
     return render(request, "member/profile.html", {'alert':"Your return request has been sent. Please wait for confirmation."})
->>>>>>> 8f1d6c7 (modified Reminder table)
+
+
+def member_logout(request):
+    logout(request)
+    return redirect("/member/login")
+

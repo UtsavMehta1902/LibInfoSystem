@@ -195,11 +195,6 @@ def profile(request):
         return redirect("/403")
 
 
-def Logout(request):
-    logout(request)
-    return redirect("/staff/staff_login")
-
-
 def approve_return_request(request):
     books = Book.objects.filter(return_requested=True)
     return render(request, "staff/approve_return_request.html", {'books': books, 'navbar_extends': "staff/clerk_navbar.html"})
@@ -214,3 +209,8 @@ def return_book_approved(request, bookid):
     book.return_requested = False
     book.save()
     return render(request, "staff/approve_return_request.html", {'alert': "Book return approved.", 'navbar_extends': "staff/clerk_navbar.html"})
+
+
+def Logout(request):
+    logout(request)
+    return redirect("/staff/staff_login")
