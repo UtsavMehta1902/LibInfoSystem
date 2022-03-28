@@ -5,6 +5,16 @@
 {% endblock %}
 {% block body %}
 
+<style>
+    .btn-return{
+        background-color: rgb(22, 172, 192);
+    }
+
+    .btn-cancel{
+        background-color: rgb(255, 51, 0)
+    }
+</style>
+
 {% if issued_books|length > 0%}
     <div class="container mt-4">
         <h1 class="text-center"><u>Currently Issued Books</u></h1>
@@ -29,7 +39,7 @@
                     <td>{{book.author}}</td>
                     <td>{{book.issue_date}}</td>
                     <td>{{book.due_date}}</td>
-                    <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td>
+                    <td><a href="/member/return_book/{{book.id}}/" class="btn btn-return" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td>
 
                 </tr>
                 {% endfor %}
@@ -68,7 +78,7 @@
                     <td>{{reserved_book.author}}</td>
                     <td>{{reserve_time}}</td>
                     <!-- <td>{{reserved_book.due_date}}</td> -->
-                    <!-- <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td> -->
+                    <td><a href="/member/" class="btn btn-cancel" onclick="return confirm('Are you sure you want to Cancel the reservation of this book?')">Cancel</a></td>
                 </tr>
           
             </tbody>

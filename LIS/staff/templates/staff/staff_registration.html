@@ -7,7 +7,7 @@
 <div class="container">
     <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <br>
-        <h1 class="text-center"><u>Staff Registration</u></h1>
+        <h1 class="text-center"><u>Add Staff Members</u></h1>
 
     <div class="row mt-4">
         <div class="form-group col-md-6">
@@ -44,16 +44,10 @@
             <input type="password" class="form-control mt-2" name="confirm_password" placeholder="Confirm Password" required>
         </div>
     </div>
-    <button type="submit" class="btn btn-outline-primary mt-4">Register As Staff</button>
+    <button type="submit" class="btn btn-outline-primary mt-4">Add Staff</button>
 </div>
 </form>
 {% endblock %}
 {% block js %}
-<!-- <script>
-    {% if alert %}
-    alert("Registration Successful.")
-    document.location = "/student_login"
-    {% endif %}
-</script> -->
 {% endblock %}
 
