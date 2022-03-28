@@ -128,7 +128,12 @@ def view_current_issues(request):
     issued_books = request.user.member.book_set.all()
     reserved_book = request.user.member.reserved_book
     reserve_time = request.user.member.reserve_datetime
-    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time})
+    active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
+    if (active_member.user.username == request.user.username):
+        reservation_status = "Active"
+    else:
+        reservation_status ="Pending"
+    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
 
 
 def view_books(request):

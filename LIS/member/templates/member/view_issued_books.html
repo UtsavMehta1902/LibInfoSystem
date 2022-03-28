@@ -15,7 +15,7 @@
     }
 </style>
 
-{% if issued_books|length > 0%}
+{% if issued_books|length > 0 %}
     <div class="container mt-4">
         <h1 class="text-center"><u>Currently Issued Books</u></h1>
         <table class="table table-hover" id="example">
@@ -77,7 +77,7 @@
                     <td>{{reserved_book.title}}</td>
                     <td>{{reserved_book.author}}</td>
                     <td>{{reserve_time}}</td>
-                    <!-- <td>{{reserved_book.due_date}}</td> -->
+                    <td>{{reservation_status}}</td>
                     <td><a href="/member/" class="btn btn-cancel" onclick="return confirm('Are you sure you want to Cancel the reservation of this book?')">Cancel</a></td>
                 </tr>
           
