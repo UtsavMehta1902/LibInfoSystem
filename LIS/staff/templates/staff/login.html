@@ -33,4 +33,12 @@
     document.location = "/admin_login"
     {% endif %}
 </script> -->
+
+
+<script>
+    {% if alert %}
+    alert("{{alert}}");
+    {% endif %}
+  </script>
+  
 {% endblock %}

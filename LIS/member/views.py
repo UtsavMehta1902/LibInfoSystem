@@ -141,17 +141,18 @@ def member_login(request):
         member_type = username.split("_")[0]
         
         if member_type != "UG" and member_type != "PG" and member_type != "RS" and member_type != "FAC":
-            # alert = True
-            return render(request, "member/login.html", {'alert': "The given username does not correspond to any member. Please enter a valid username."})
+            alert = "The given username does not correspond to any member. Please enter a valid username."
+            return render(request, "member/login.html", {'alert': alert})
 
         if user is not None:
             login(request, user)
             if request.user.is_superuser:
+                
                 return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
             else:
                 return redirect("/member/profile")
         else:
-            alert = True
+            alert = "The given username does not correspond to any member. Please enter a valid username."
             return render(request, "member/login.html", {'alert':alert})
     return render(request, "member/login.html")
 
