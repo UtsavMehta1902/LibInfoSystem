@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
+import pytz
 from django.contrib.sites.shortcuts import get_current_site
 # from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -23,13 +24,13 @@ def member_home_page(request):
 def member_registration(request):
     if request.method == "POST":
 
-        member_type = request.POST['member_type']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        insti_id = request.POST['insti_id']
-        password = request.POST['password']
-        confirm_password = request.POST['confirm_password']
+        member_type = request.POST.get('member_type', "")
+        first_name = request.POST.get('first_name',"")
+        last_name = request.POST.get('last_name',"")
+        email = request.POST.get('email',"")
+        insti_id = request.POST.get('insti_id',"")
+        password = request.POST.get('password',"")
+        confirm_password = request.POST.get('confirm_password',"")
         
         username = ""
         limit=0
@@ -191,7 +192,7 @@ def reserve_book(request, book_id):
             return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
     else:
         member.reserved_book = book
-        member.reserve_datetime = datetime.datetime.now(tz= 'Asia/Kolkata')
+        member.reserve_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
         
