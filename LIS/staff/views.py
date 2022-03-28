@@ -1,9 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render, HttpResponse
-from member.models import Member
+# from LIS.member.views import reserve_book
+from member.models import IssueThread, Member
 from book.models import Book
 from .models import *
 from django.contrib.auth.decorators import login_required
+import datetime
+# from member import Member
 
 # Create your views here.
 clerk_cnt = 0
@@ -209,6 +212,15 @@ def approve_return_request(request, msg=""):
 
 def return_book_approved(request, bookid):
     book = Book.objects.get(id=bookid)
+
+    # for issue history
+    member = book.issue_member
+    issue_date = book.issue_date
+    return_date = datetime.date.today().isoformat()
+    penalty = 0.0
+
+    issue_instance = IssueThread.objects.create(member = member, book = book, issue_date = issue_date, return_date = return_date, penalty = penalty)
+    issue_instance.save()
     book.issue_date = None
     book.issue_member = None
     book.return_requested = False

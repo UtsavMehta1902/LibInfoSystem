@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
-import pytz
+# import pytz
 from django.contrib.sites.shortcuts import get_current_site
 # from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -189,6 +189,7 @@ def member_logout(request):
 
 
 @login_required(login_url = '/member/login')
+# @cache_control(no_cache=True, must_revalidate=True, no_store = True)
 def issue_book(request, book_id):
 
     book = Book.objects.get(id=book_id)
@@ -221,11 +222,12 @@ def reserve_book(request, book_id):
             return render(request, "member/profile.html", {'alert':"Cannot reserve this book for you. You already have a book currently reserved for you!"})
     else:
         member.reserved_book = book
-        member.reserve_datetime = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
+        member.reserve_datetime = datetime.datetime.now()
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
         
 def return_book(request, book_id):
+
     book = Book.objects.get(id = book_id)
     book.return_requested = True
     book.save()
