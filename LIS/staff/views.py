@@ -140,6 +140,10 @@ def staff_login(request):
         user = authenticate(username=username, password=password)
         user_name = user.username.split('_')[0]
 
+        if user_name != "LIBC" and user_name != "LIBR":
+            # alert = True
+            return render(request, "staff/login.html", {'alert': "The given username does not correspond to any staff member. Please enter a valid username."})
+
         if user is not None:
             login(request, user)
             navbar_extends = ""

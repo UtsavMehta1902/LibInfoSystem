@@ -30,4 +30,11 @@
         alert("{{ message }}");
     {% endif %}
 </script>
+
+<script>
+    {% if alert %}
+    alert("{{alert}}");
+    {% endif %}
+  </script>
+  
 {% endblock %}

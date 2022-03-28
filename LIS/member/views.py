@@ -127,15 +127,21 @@ def member_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        member_type = username.split("_")[0]
+        
+        if member_type != "UG" and member_type != "PG" and member_type != "RS" and member_type != "FAC":
+            alert = "The given username does not correspond to any member. Please enter a valid username."
+            return render(request, "member/login.html", {'alert': alert})
 
         if user is not None:
             login(request, user)
             if request.user.is_superuser:
-                return HttpResponse("You are not a Member!!")
+                
+                return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
             else:
                 return redirect("/member/profile")
         else:
-            alert = True
+            alert = "The given username does not correspond to any member. Please enter a valid username."
             return render(request, "member/login.html", {'alert':alert})
     return render(request, "member/login.html")
 
@@ -144,6 +150,7 @@ def member_logout(request):
     return redirect("/member/login")
 
 def issue_book(request, book_id):
+
     book = Book.objects.get(id=book_id)
     member = request.user.member
 
