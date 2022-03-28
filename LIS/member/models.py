@@ -15,7 +15,6 @@ class Member(models.Model):
     reserve_datetime = models.DateTimeField(null = True)
     issue_history = models.CharField(max_length = 500, null = True)
 
-
     def __str__(self):
         return str(self.user)
 
@@ -23,7 +22,6 @@ class Member(models.Model):
 #     member = models.OnetoOneField(Member, on_delete = models.CASCADE)
 #     reserve_date = models.DateField(null = True)
 #     book = models.ForeignKey(Book, on_delete = models.CASCADE)
-
 
 class Reminder(models.Model):
     rem_id = models.CharField(max_length = 10)

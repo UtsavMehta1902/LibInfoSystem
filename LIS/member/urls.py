@@ -8,6 +8,5 @@ urlpatterns = [
     path("view_books/", views.view_books, name="view_books"),
     path("logout/", views.member_logout, name="logout"),
     path("issue_book/<int:book_id>/", views.issue_book, name="issue_book"),
-    path('activate/<uidb64>/<token>', views.activate, name='activate'), 
     path('', views.member_home_page, name="home"),
 ]

@@ -24,4 +24,10 @@
     </div>
     <button type="submit" class="btn btn-outline-primary mt-4">Login</button>
 </div>
+
+<script>
+    {% if message %}
+        alert("{{ message }}");
+    {% endif %}
+</script>
 {% endblock %}

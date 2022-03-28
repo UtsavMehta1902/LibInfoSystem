@@ -1,30 +1,12 @@
-from operator import truediv
-import re
+
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
-from django.core.mail import EmailMessage
-from django.conf import settings
+# from django.conf import settings
+# from django.core.mail import send_mail
 
-<<<<<<< HEAD
-=======
-from django.contrib.sites.shortcuts import get_current_site
-# from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from .token import account_activation_token
-from django.template.loader import render_to_string
-import json
-from member.decrypter import decoder
-from django.core.mail.backends.smtp import EmailBackend
-# Create your views here.
-# UG_cnt=0
-# PG_cnt=0
-# RS_cnt=0
-# FAC_cnt=0
-
->>>>>>> a5c3af35b40252d23897b5df6705eaf9c615293a
 def member_home_page(request):
     return render(request, "member/home.html")
 
@@ -67,55 +49,18 @@ def member_registration(request):
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         member = Member.objects.create(insti_id=insti_id, user=user, book_limit=limit, book_duration=duration)
         
-        user.is_active = False
         user.save()
         member.save()
-        alert = True
 
-
-        connection = EmailBackend(host='smtp.gmail.com',
-        port=587,
-        username='noreplycomposit2022@gmail.com', 
-        password='composit@2022')
-        
-    
-        body = render_to_string('email_verification.html', {
-        'user': user,
-        'domain': 'composit-api.herokuapp.com',
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token.make_token(user),
-        })
-
-        emailSender = EmailMessage(
-            'Composit Registration confirmed',
-            body,
-            settings.EMAIL_HOST_USER,
-            [email],
-            bcc=['sailokesh.gorantla@ecell-iitkgp.org'],
-            connection=connection
-        )
-        emailSender.fail_silently = False
-        emailSender.send()
-
-
-        return redirect('/member/login')
-        return render(request, "member/registration.html", {'alert':alert})
+        # subject = "Welcome to the Library"
+        # message = f"Hello {first_name + last_name}!\nThank you for registering to our LIS portal.\nYour username is {username}.\nPlease login to your account to continue."
+        # email_from = settings.EMAIL_HOST_USER
+        # recipient_list = [email,]
+        # send_mail( subject, message, email_from, recipient_list, fail_silently=False)
+        message = f"Your username is {username}. Please remember this for future purposes."
+        return render(request, 'member/login.html', {'message': message})
+        return render(request, "member/registration.html")  
     return render(request, "member/registration.html")
-
-def activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-    else:
-        return HttpResponse('Activation link is invalid!')
 
 @login_required(login_url = '/member/login')
 def profile(request):
@@ -155,10 +100,6 @@ def member_logout(request):
 
 def issue_book(request, book_id):
     book = Book.objects.get(id=book_id)
-<<<<<<< HEAD
-=======
-    # print(request.user.id)
->>>>>>> a5c3af35b40252d23897b5df6705eaf9c615293a
     member = request.user.member
 
     issued_books = member.book_set.all()
@@ -183,6 +124,3 @@ def reserve_book(request, book_id):
         member.reserve_datetime = datetime.datetime.now()
         member.save()
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
-
-        
-
