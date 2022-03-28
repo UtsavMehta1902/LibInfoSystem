@@ -90,7 +90,7 @@ def view_books(request, msg=""):
         else:
             navbar_extends = "staff/librarian_navbar.html"
         books_details = zip(books, books_reservations)
-        return render(request, "staff/view_books.html", {'books_details':books_details, 'total_books': len(books), 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends})
+        return render(request, "staff/view_books.html", {'books_details':books_details, 'total_books': len(books), 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends, 'msg':msg})
     else:
         return redirect("/403")
 
