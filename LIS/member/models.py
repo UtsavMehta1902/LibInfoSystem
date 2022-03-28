@@ -20,7 +20,7 @@ class Member(models.Model):
         return str(self.user)
 
 # class Reservation(models.Model):
-#     member = models.OnetoOneField(Member, on_delete = models.CASCADE)
+#     member = models.OneToOneField(Member, on_delete = models.CASCADE)
 #     reserve_date = models.DateField(null = True)
 #     book = models.ForeignKey(Book, on_delete = models.CASCADE)
 

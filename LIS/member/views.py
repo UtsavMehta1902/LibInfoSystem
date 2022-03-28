@@ -8,6 +8,10 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.core.mail import EmailMessage
 from django.conf import settings
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8636c2a (changed member model)
 from django.contrib.sites.shortcuts import get_current_site
 # from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -64,35 +68,35 @@ def member_registration(request):
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         member = Member.objects.create(insti_id=insti_id, user=user, book_limit=limit, book_duration=duration)
         
-        user.is_active = False
+        # user.is_active = False
         user.save()
         member.save()
         alert = True
 
 
-        connection = EmailBackend(host='smtp.gmail.com',
-        port=587,
-        username='noreplycomposit2022@gmail.com', 
-        password='composit@2022')
+        # connection = EmailBackend(host='smtp.gmail.com',
+        # port=587,
+        # username='noreplycomposit2022@gmail.com', 
+        # password='composit@2022')
         
     
-        body = render_to_string('email_verification.html', {
-        'user': user,
-        'domain': 'composit-api.herokuapp.com',
-        # 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token.make_token(user),
-        })
+        # body = render_to_string('email_verification.html', {
+        # 'user': user,
+        # 'domain': 'composit-api.herokuapp.com',
+        # # 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        # 'token': account_activation_token.make_token(user),
+        # })
 
-        emailSender = EmailMessage(
-            'Composit Registration confirmed',
-            body,
-            settings.EMAIL_HOST_USER,
-            [email],
-            bcc=['sailokesh.gorantla@ecell-iitkgp.org'],
-            connection=connection
-        )
-        emailSender.fail_silently = False
-        emailSender.send()
+        # emailSender = EmailMessage(
+        #     'Composit Registration confirmed',
+        #     body,
+        #     settings.EMAIL_HOST_USER,
+        #     [email],
+        #     bcc=['sailokesh.gorantla@ecell-iitkgp.org'],
+        #     connection=connection
+        # )
+        # emailSender.fail_silently = False
+        # emailSender.send()
 
 
         return redirect('/member/login')
@@ -152,6 +156,10 @@ def member_logout(request):
 
 def issue_book(request, book_id):
     book = Book.objects.get(id=book_id)
+<<<<<<< HEAD
+=======
+    # print(request.user.id)
+>>>>>>> 8636c2a (changed member model)
     member = request.user.member
 
     issued_books = member.book_set.all()
