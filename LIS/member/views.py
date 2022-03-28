@@ -3,8 +3,19 @@ from django.shortcuts import redirect, render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
-# from django.conf import settings
-# from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+# from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template.loader import render_to_string
+import json
+from django.core.mail.backends.smtp import EmailMessage, EmailBackend
+# Create your views here.
+# UG_cnt=0
+# PG_cnt=0
+# RS_cnt=0
+# FAC_cnt=0
 
 def member_home_page(request):
     return render(request, "member/home.html")
@@ -152,6 +163,7 @@ def member_logout(request):
 def issue_book(request, book_id):
 
     book = Book.objects.get(id=book_id)
+    # print(request.user.id)
     member = request.user.member
 
     issued_books = member.book_set.all()

@@ -11,6 +11,29 @@ clerk_cnt=0
 def staff_home_page(request):
     return render(request, "staff/home.html")
 
+
+def staff_login(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        user_name = user.username.split('_')[0]
+
+        if user is not None:
+            login(request, user)
+            navbar_extends = ""
+            if user_name == "LIBC":
+                navbar_extends = "staff/clerk_navbar.html"
+            else:
+                navbar_extends = "staff/librarian_navbar.html"
+            return render(request, "staff/profile.html", {'user_name': user_name, 'navbar_extends': navbar_extends})
+        else:
+            alert = True
+            return render(request, "staff/login.html", {'alert':alert})
+    return render(request, "staff/login.html")
+
+
+login_required(login_url='/staff_login')
 def staff_registration(request):
 
     if request.method == "POST":
@@ -43,7 +66,19 @@ def staff_registration(request):
 
     return render(request, "staff/staff_registration.html")
 
-    
+
+@login_required(login_url = '/staff_login')
+def profile(request):
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        return render(request, "staff/clerk_profile.html")
+    elif user_name == "LIBR":
+        return render(request, "staff/librarian_profile.html")
+    else:
+        return redirect("/403")
+
+
 @login_required(login_url = '/staff_login')
 def add_book(request):
     user_name = request.user.username
@@ -63,6 +98,7 @@ def add_book(request):
     else:
         return redirect("/403")
 
+
 @login_required(login_url = '/staff_login')
 def view_books(request):
     user_name = request.user.username
@@ -77,6 +113,7 @@ def view_books(request):
         return render(request, "staff/view_books.html", {'books':books, 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends})
     else:
         return redirect("/403")
+
 
 @login_required(login_url = '/staff_login')
 def view_issued_books(request):
@@ -94,6 +131,11 @@ def view_issued_books(request):
     else:
         return redirect("/403")
 
+
+def sort_reservations(book):
+    book.member_set.all().order_by('reserve_datetime')
+
+
 @login_required(login_url = '/staff_login')
 def view_members(request):
     user_name = request.user.username
@@ -110,6 +152,7 @@ def view_members(request):
     else:
         return redirect("/403")
 
+@login_required(login_url = '/staff_login')
 def delete_member(request, myid):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
@@ -130,41 +173,6 @@ def delete_book(request, myid):
         book = Book.objects.filter(id=myid)
         book.delete()
         return redirect("/staff/view_books")
-    else:
-        return redirect("/403")
-
-def staff_login(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        user_name = user.username.split('_')[0]
-
-        if user_name != "LIBC" and user_name != "LIBR":
-            # alert = True
-            return render(request, "staff/login.html", {'alert': "The given username does not correspond to any staff member. Please enter a valid username."})
-
-        if user is not None:
-            login(request, user)
-            navbar_extends = ""
-            if user_name == "LIBC":
-                navbar_extends = "staff/clerk_navbar.html"
-            else:
-                navbar_extends = "staff/librarian_navbar.html"
-            return render(request, "staff/profile.html", {'user_name': user_name, 'navbar_extends': navbar_extends})
-        else:
-            alert = True
-            return render(request, "staff/login.html", {'alert':alert})
-    return render(request, "staff/login.html")
-
-@login_required(login_url = '/staff_login')
-def profile(request):
-    user_name = request.user.username
-    user_name = user_name.split("_")[0]
-    if user_name == "LIBC":
-        return render(request, "staff/clerk_profile.html")
-    elif user_name == "LIBR":
-        return render(request, "staff/librarian_profile.html")
     else:
         return redirect("/403")
 
