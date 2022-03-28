@@ -60,37 +60,14 @@
       </div>
     </div>
   </div>
-  {% if issued_books|length > 0%}
-    <div class="container mt-4">
-        <h1 class="text-center"><u>Issued Books List</u></h1>
-        <table class="table table-hover" id="example">
-            <thead>
-                <tr>
-                    <th>Sr.No</th>
-                    <th>ISBN</th>
-                    <th>Title</th>
-                    <th>Author(s)</th>
-                    <th>Rack Number</th>
-                    <th>Return</th>  
-                </tr>
-            </thead>
-            <tbody>
-                {% for book in issued_books %}
-                <tr>
-                    <td>{{forloop.counter}}.</td>
-                    <td>{{book.isbn}}</td>
-                    <td>{{book.title}}</td>
-                    <td>{{book.author}}</td>
-                    <td>{{book.rack_number}}</td>
-                    
-                    <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td>
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif%}
+  <div>
+    <ul>
+      <li><a href="/member/view_issued_books">View My Currently Issued/Reserved Books</a></li>
+      <li><a href="/member/">View My Issue History</a></li>
+      <!-- <li><a href="/staff/staff_login">View my Reserve History</a></li> -->
+    </ul>
+  </div>
 </div>
 
 <script>

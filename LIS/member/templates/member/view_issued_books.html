@@ -1,0 +1,87 @@
+{% extends 'member/member_navbar.html' %}
+{% load static %}
+{% block title %} Library Information System {% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+
+{% if issued_books|length > 0%}
+    <div class="container mt-4">
+        <h1 class="text-center"><u>Currently Issued Books</u></h1>
+        <table class="table table-hover" id="example">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>ISBN</th>
+                    <th>Title</th>
+                    <th>Author(s)</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return</th> 
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in issued_books %}
+                <tr>
+                    <td>{{forloop.counter}}.</td>
+                    <td>{{book.isbn}}</td>
+                    <td>{{book.title}}</td>
+                    <td>{{book.author}}</td>
+                    <td>{{book.issue_date}}</td>
+                    <td>{{book.due_date}}</td>
+                    <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="container mt-4">
+        <h1 class="text-center"><u>Currently Issued Books</u></h1>
+        <br>
+        <h4 class="text-center">You do not have any books issued currently.</h4>
+    </div>
+{% endif%}
+
+
+{% if reserved_books|length > 0 %}
+    <div class="container mt-4">
+        <h1 class="text-center"><u>Currently Reserved Book</u></h1>
+        <table class="table table-hover" id="example">
+            <thead>
+                <tr>
+                    <th>Sr.No</th>
+                    <th>ISBN</th>
+                    <th>Title</th>
+                    <th>Author(s)</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <!-- <th>Return</th>  -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in reserved_books %}
+                <tr>
+                    <td>{{forloop.counter}}.</td>
+                    <td>{{book.isbn}}</td>
+                    <td>{{book.title}}</td>
+                    <td>{{book.author}}</td>
+                    <td>{{book.issue_date}}</td>
+                    <td>{{book.due_date}}</td>
+                    <!-- <td><a href="/member/return_book/{{book.id}}/" class="btn" onclick="return confirm('Are you sure you want to Return this book?')">Return</a></td> -->
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="container mt-4">
+        <h1 class="text-center"><u>Currently Reserved Book</u></h1>
+        <br>
+        <h4 class="text-center">You do not have any book reserved currently.</h4>
+    </div>
+{% endif%}
+ 
+{% endblock %}

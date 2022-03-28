@@ -111,6 +111,13 @@ def profile(request):
     issued_books = request.user.member.book_set.all()
     return render(request, "member/profile.html", {'is_faculty': is_faculty, 'issued_books':issued_books})
 
+@login_required(login_url = '/member/login')
+def view_current_issues(request):
+    issued_books = request.user.member.book_set.all()
+    reserved_book = request.user.member.reserved_book
+    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book})
+
+
 def view_books(request):
     books = Book.objects.all()
     return render(request, "member/view_books.html", {'books' :books})
