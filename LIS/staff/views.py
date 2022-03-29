@@ -24,6 +24,7 @@ def staff_registration(request):
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         email = request.POST['email']
+        insti_id = request.POST.get('insti_id',"")
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
         staff_type = request.POST['staff_type']
