@@ -143,7 +143,7 @@ def delete_member(request, myid):
     user_name = user_name.split("_")[0]
 
     if user_name == "LIBR":
-        members = Member.objects.get(id=(myid-7))
+        members = Member.objects.get(id=myid)
         members.user.delete()
         members.delete()
         return redirect("/staff/view_members")
