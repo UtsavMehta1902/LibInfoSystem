@@ -14,8 +14,10 @@ from django.template.loader import render_to_string
 import json
 from dateutil.relativedelta import relativedelta
 
+
 def member_home_page(request):
     return render(request, "member/home.html")
+
 
 def member_registration(request):
     if request.method == "POST":
@@ -195,9 +197,21 @@ def member_login(request):
 
 
 @login_required(login_url = '/member/login')
-def member_logout(request):
-    logout(request)
-    return redirect("/member/login")
+def profile(request):
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    is_faculty = False
+    if(user_name == "FAC"):
+        is_faculty = True
+    
+    issued_books = request.user.member.book_set.all()
+    return render(request, "member/profile.html", {'is_faculty': is_faculty, 'issued_books':issued_books})
+
+
+def view_books(request):
+    books = Book.objects.all()
+    return render(request, "member/view_books.html", {'books' :books})
+
 
 
 @login_required(login_url = '/member/login')
@@ -221,6 +235,18 @@ def issue_book(request, book_id):
 
 
 @login_required(login_url = '/member/login')
+def view_current_issues(request):
+    issued_books = request.user.member.book_set.all()
+    reserved_book = request.user.member.reserved_book
+    reserve_time = request.user.member.reserve_datetime
+    active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
+    if (active_member.user.username == request.user.username):
+        reservation_status = "Active"
+    else:
+        reservation_status ="Pending"
+    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
+
+
 def reserve_book(request, book_id):
     book = Book.objects.get(id = book_id)
     member = request.user.member
@@ -258,3 +284,8 @@ def view_reminders(request):
     reminders = request.user.member.reminder_set.all()
     reminders = reminders.order_by("-rem_datetime")
     return render(request, "member/view_reminders.html", {'reminders': reminders})
+
+def member_logout(request):
+    logout(request)
+    return redirect("/member/login")
+
