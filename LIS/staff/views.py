@@ -258,3 +258,7 @@ def penalty_reminder(bookid):
     reminder.save()
 
     return penalty
+
+
+def issue_statistics(request):
+    pass

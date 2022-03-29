@@ -1,5 +1,12 @@
-{% extends navbar_extends %} {% load static %} {% block title %} Library
-Information System {% endblock %} {% block css %} {% endblock %} 
+{% extends navbar_extends %} {% block title %} Library Information System
+{%endblock %}
+{% block css %}
+  <style>
+    body {
+      background-color: #1f2739;
+    }
+  </style>
+{% endblock %} 
 {% block body%}
 
 <style>
@@ -9,6 +16,9 @@ Information System {% endblock %} {% block css %} {% endblock %}
     line-height: 1em;
     text-align: center;
     color: #4dc3fa;
+    /* new */
+    padding: 3rem;
+
   }
 
   h3 {
@@ -21,9 +31,11 @@ Information System {% endblock %} {% block css %} {% endblock %}
     color: #fb667a;
   }
 
-  .container th h1{
+  .container th h1 {
     font-weight: bold;
     font-size: 1em;
+    /* new */
+    padding: 0rem;
     text-align: left;
     color: #185875;
   }
@@ -42,7 +54,12 @@ Information System {% endblock %} {% block css %} {% endblock %}
     width: 80%;
     margin: 0 auto;
     display: table;
-    padding: 0 0 8em 0;
+    /* change */
+    padding: 3rem 0 8em 0;
+  }
+
+  #example{
+    color: white;
   }
 
   .container td,
@@ -88,7 +105,7 @@ Information System {% endblock %} {% block css %} {% endblock %}
     transition-timing-function: line;
   }
 
-  .container td{
+  .container td {
     color: rgb(226, 223, 223);
   }
 
@@ -117,7 +134,7 @@ Information System {% endblock %} {% block css %} {% endblock %}
         <th><h1>Issued By</h1></th>
         <th><h1>Due Date</h1></th>
         {% if not is_clerk %}
-          <th><h1>Action</h1></th>
+        <th><h1>Action</h1></th>
         {% endif %}
         <!-- <th>Reserved By</th> -->
       </tr>
@@ -138,9 +155,11 @@ Information System {% endblock %} {% block css %} {% endblock %}
         <td>{{book.issue_member.user.username}}</td>
         <td>{{due_date}}</td>
         {% if not is_clerk %}
-          <td>
-            <a href="/staff/overdue_reminder/{{book.id}}" class="btn btn-primary">Remind</a>
-          </td>
+        <td>
+          <a href="/staff/overdue_reminder/{{book.id}}" class="btn btn-primary"
+            >Remind</a
+          >
+        </td>
         {% endif %}
       </tr>
       {% endfor %}

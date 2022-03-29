@@ -15,5 +15,6 @@ urlpatterns = [
     path("approve_return_request/", views.approve_return_request, name="approve_return_request"),
     path("return_book_approved/<int:bookid>/", views.return_book_approved, name="return_book_approved"),
     path("overdue_reminder/<int:bookid>/", views.overdue_reminder, name="overdue_reminder"),
+    path("issue_statistics/", views.issue_statistics, name="issue_statistics"),
     path('', views.staff_home_page, name="home"),
 ]
