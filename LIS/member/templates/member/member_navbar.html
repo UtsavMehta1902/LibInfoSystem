@@ -23,23 +23,29 @@
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <!-- <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/change_password/">Change Password</a>
-              </li> -->
-              <!-- &nbsp;&nbsp;&nbsp;-->
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/member/profile/">Profile</a>
               </li>
               &nbsp;&nbsp;&nbsp;
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/member/view_books/">View All Books</a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Books
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="/member/view_books/">Add Books</a></li>
+                  <li><a class="dropdown-item" href="/member/view_issued_books">View My Currently Issued/Reserved Books</a></li>
+                  <li><a class="dropdown-item" href="/member/view_issue_history">View My Issue History</a></li>
+                </ul>
               </li>
               &nbsp;&nbsp;&nbsp;
+              <li class="nav-item">
+                <li><a class="nav-link active" href="/member/view_reminders">View Reminders</a></li>
+              </li>
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/member/logout/">Logout</a>
               </li>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <li class="nav-item">
+              <li class="nav-item display-msg-header">
                 <a style="font-weight:600; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: large;" class="nav-link active" href="#">Welcome: {{request.user.first_name}}</a>
               </li>
             </ul>

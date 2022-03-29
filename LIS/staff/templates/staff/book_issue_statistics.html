@@ -114,11 +114,11 @@
 </style>
 
 <div class="container">
-  <h1 class="text-center"><u>5 years ago</u></h1>
+  <h1 class="text-center"><u>Books not Issued since 5 years</u></h1>
   {% if not_issued_5|length == 0 %}
   <h3 class="text-center">No issued books available.</h3>
   {% else %}
-  <table class="table table-hover" id="example">
+  <table class="table table-hover">
     <thead>
       <tr>
         <th><h1>Sr.No</h1></th>
@@ -142,6 +142,37 @@
   </table>
   {% endif %}
 </div>
+
+<div class="container">
+  <h1 class="text-center"><u>Books not Issued since 3 years</u></h1>
+  {% if not_issued_3|length == 0 %}
+  <h3 class="text-center">No issued books available.</h3>
+  {% else %}
+  <table class="table table-hover" >
+    <thead>
+      <tr>
+        <th><h1>Sr.No</h1></th>
+        <th><h1>ISBN</h1></th>
+        <th><h1>Title</h1></th>
+        <th><h1>Rack No.</h1></th>
+        <th><h1>Last Issue Date</h1></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in not_issued_3 %}
+      <tr>
+        <td>{{forloop.counter}}.</td>
+        <td>{{book.isbn}}</td>
+        <td>{{book.title}}</td>
+        <td>{{book.rack_number}}</td>
+        <td>{{book.last_issued_date}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+
 <script>
   {% if msg %}
   alert("{{msg}}");

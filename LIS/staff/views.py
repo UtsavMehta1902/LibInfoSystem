@@ -10,11 +10,7 @@ from dateutil.relativedelta import relativedelta
 PENALTY_PER_DAY = 5
 clerk_cnt = 0
 
-
-def staff_home_page(request):
-    return render(request, "staff/home.html")
-
-
+# function to register a new staff member: Librarian and Clerks (a Librarian can be registered into the software only once, as a Library has only one Librarian) 
 def staff_registration(request):
 
     if request.method == "POST":
@@ -29,16 +25,9 @@ def staff_registration(request):
         staff_type = request.POST['staff_type']
         user_name = ""
 
-        if staff_type == "LIBRARIAN":
-            user_name = "LIBR_0"
-
-        elif staff_type == "LIBRARY CLERK":
-            user_name = "LIBC_" + str(clerk_cnt)
-            clerk_cnt += 1
-
         if password != confirm_password:
             passnotmatch = True
-            return render(request, "staff/staff_registration.html", {'passnotmatch': passnotmatch})
+            return render(request, "staff/staff_registration.html", {'passnotmatch': 'Passwords do not match!'})
 
         user = User.objects.create_user(
             username=user_name, email=email, password=password, first_name=first_name, last_name=last_name)
@@ -50,14 +39,16 @@ def staff_registration(request):
     return render(request, "staff/staff_registration.html")
 
 
+# this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
 def add_book(request):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
+
+    # only clerks are allowed to add a book, and not the Librarian
     if user_name == "LIBC":
         if request.method == "POST":
             title = request.POST.get('title', "")
-            print(title)
             author = request.POST.get('author', "")
             isbn = request.POST.get('isbn', 0)
             rack_number = request.POST.get('rack_number', "")
@@ -67,18 +58,24 @@ def add_book(request):
             alert = "The book with the given details has been successfully added to the portal!"
             return render(request, "staff/add_book.html", {'alert': alert})
         return render(request, "staff/add_book.html")
-    else:
+    
+    else:    # if the user is a Librarian
         return redirect("/403")
 
-
+# helper function to sort the current reservations of a book by the date and time of reservation in the order oldest request first
 def sort_reservations(book):
     book_reservations = []
-    for member in book.member_set.all().order_by('reserve_datetime'):
-        book_reservations.append(member)
+    try:
+        for member in book.member_set.all().order_by('reserve_datetime'):
+            book_reservations.append(member)
+    except(Exception):
+        pass
     return book_reservations
 
     
 @login_required(login_url='/staff_login')
+
+# function to allow the Librarian or clerk to view all the books in the Library as well as who all have reserved or issued that book
 def view_books(request, msg=""):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
@@ -88,10 +85,12 @@ def view_books(request, msg=""):
         for book in books:
             books_reservations.append(sort_reservations(book))
         navbar_extends = ""
+        
         if user_name == "LIBC":
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
+
         books_details = zip(books, books_reservations)
         return render(request, "staff/view_books.html", {'books_details':books_details, 'total_books': len(books), 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends, 'msg':msg})
     else:
@@ -218,6 +217,16 @@ def approve_return_request(request, msg=""):
 
 # TODO: ADD PENALTY FUNCTIONALITY ONCE NOTIFICATIONS IS DONE
 
+def activate_reservation(book):
+    try:
+        active_member = sort_reservations(book)[0]
+    except(Exception):
+        active_member = None
+    if active_member is not None:
+        reservation_reminder(active_member, book)
+        
+    return book
+
 
 def return_book_approved(request, bookid):
     book = Book.objects.get(id=bookid)
@@ -233,13 +242,25 @@ def return_book_approved(request, bookid):
     book.issue_date = None
     book.issue_member = None
     book.return_requested = False
+    book = activate_reservation(book)
     book.save()
     return approve_return_request(request, "Book return approved successfully!")
 
 
 def overdue_reminder(request, bookid):
     book_obj = Book.objects.get(id=bookid)
-    reminder = Reminder.objects.create(rem_id = 'Overdue', message = "Your book is due to be returned!", penalty=0, book=book_obj, member=book_obj.issue_member, rem_datetime=datetime.datetime.now())
+    type = ""
+    msg = ""
+
+    if book_obj.issue_date + relativedelta(months=book_obj.issue_member.book_duration) < datetime.date.today():
+        type = "Overdue"
+        msg = "Book return date is overdue!"
+    else:
+        days = ((book_obj.issue_date + relativedelta(months=book_obj.issue_member.book_duration)) - datetime.date.today()).days
+        type = "Due"
+        msg = f"Book return date is {days} away!"
+
+    reminder = Reminder.objects.create(rem_id = type, message = msg, penalty=0, book=book_obj, member=book_obj.issue_member, rem_datetime=datetime.datetime.now())
     reminder.save()
     return view_issued_books(request, "Reminder sent successfully!")
 
@@ -259,13 +280,23 @@ def penalty_reminder(bookid):
     return penalty
 
 
+def reservation_reminder(active_member, book):
+    reminder = Reminder.objects.create(rem_id = 'Reserved', message = "Your book reservation is now active.", penalty=0, book=book, member=active_member, rem_datetime=datetime.datetime.now())
+    reminder.save()
+    return
+
+
 def issue_statistics(request):
     books = Book.objects.all()
     not_issued_5 = []
+    not_issued_3 = []
     for book in books:
         if book.date_added is not None:
             if book.date_added + relativedelta(years=5) < datetime.date.today():
                 if book.last_issued_date is None or book.last_issued_date  + relativedelta(years=5) < datetime.date.today():
                     not_issued_5.append(book)
+            if book.date_added + relativedelta(years=3) < datetime.date.today():
+                if book.last_issued_date is None or book.last_issued_date  + relativedelta(years=3) < datetime.date.today():
+                    not_issued_3.append(book)
 
-    return render(request, "staff/book_issue_statistics.html", {'not_issued_5': not_issued_5, 'navbar_extends': "staff/librarian_navbar.html",})
+    return render(request, "staff/book_issue_statistics.html", {'not_issued_3': not_issued_3, 'not_issued_5': not_issued_5, 'navbar_extends': "staff/librarian_navbar.html",})

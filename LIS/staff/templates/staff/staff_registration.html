@@ -25,13 +25,6 @@
             <label><i style="font-weight: bold;">Email</i></label>
             <input type="email" class="form-control mt-2" name="email" placeholder="Enter Email" required>
         </div>
-        <div>
-            <label><i style="font-weight: bold;padding: 2rem 2rem 0.8rem 0rem; display: block;">Register As</i></label>
-            <select name="staff_type">
-                <option value="LIBRARIAN">Librarian</option>
-                <option value="LIBRARY CLERK">Library Clerk</option>
-            </select>
-        </div>
     </div>
 
     <div class="row mt-4">
@@ -47,6 +40,12 @@
     <button type="submit" class="btn btn-outline-primary mt-4">Add Staff</button>
 </div>
 </form>
+
+<script>
+    {% if passnotmatch %}
+    alert("Passwords do not match!");
+    {% endif %}
+</script>
 {% endblock %}
 {% block js %}
 {% endblock %}

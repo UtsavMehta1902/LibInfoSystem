@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from book.models import Book
 
 
-
 # Member class: 
 # An object of the member class represents a unique member on the Library Information Portal
 
