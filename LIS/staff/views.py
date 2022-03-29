@@ -173,6 +173,9 @@ def staff_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        if user is None:
+            return render(request, "staff/login.html", {'alert': "Invalid login credentials. Please try again."})
+
         user_name = user.username.split('_')[0]
 
         if user_name != "LIBC" and user_name != "LIBR":

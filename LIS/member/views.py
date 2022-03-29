@@ -167,6 +167,10 @@ def member_login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+
+        if user is None:
+            return render(request, "member/login.html", {'alert': "Invalid login credentials. Please try again."})
+
         member_type = username.split("_")[0]
         
         if member_type != "UG" and member_type != "PG" and member_type != "RS" and member_type != "FAC":
