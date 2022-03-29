@@ -26,6 +26,7 @@ class Reminder(models.Model):
     member = models.ForeignKey(Member, on_delete = models.CASCADE)
     rem_datetime = models.DateTimeField(null = True)
 
+
 class IssueThread(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     book  = models.OneToOneField(Book, on_delete = models.CASCADE)

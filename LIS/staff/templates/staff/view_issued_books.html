@@ -139,7 +139,7 @@ Information System {% endblock %} {% block css %} {% endblock %}
         <td>{{due_date}}</td>
         {% if not is_clerk %}
           <td>
-            <a href="/staff/send_reminder/{{book.id}}" class="btn btn-primary">Remind</a>
+            <a href="/staff/overdue_reminder/{{book.id}}" class="btn btn-primary">Remind</a>
           </td>
         {% endif %}
       </tr>

@@ -7,6 +7,7 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from dateutil.relativedelta import relativedelta
 
+PENALTY_PER_DAY = 5
 # Create your views here.
 clerk_cnt = 0
 
@@ -142,7 +143,7 @@ def delete_member(request, myid):
     user_name = user_name.split("_")[0]
 
     if user_name == "LIBR":
-        members = Member.objects.get(id=myid)
+        members = Member.objects.get(id=(myid-7))
         members.user.delete()
         members.delete()
         return redirect("/staff/view_members")
@@ -222,7 +223,7 @@ def return_book_approved(request, bookid):
     member = book.issue_member
     issue_date = book.issue_date
     return_date = datetime.date.today().isoformat()
-    penalty = 0.0
+    penalty = penalty_reminder(bookid)
 
     issue_instance = IssueThread.objects.create(member = member, book = book, issue_date = issue_date, return_date = return_date, penalty = penalty)
     issue_instance.save()
@@ -233,8 +234,23 @@ def return_book_approved(request, bookid):
     return approve_return_request(request, "Book return approved successfully!")
 
 
-def send_reminder(request, bookid):
+def overdue_reminder(request, bookid):
     book_obj = Book.objects.get(id=bookid)
-    reminder = Reminder.objects.create(rem_id = 'O', message = "Your book is due to be returned!", penalty=0, book=book_obj, member=book_obj.issue_member, rem_datetime=datetime.datetime.now())
+    reminder = Reminder.objects.create(rem_id = 'Overdue', message = "Your book is due to be returned!", penalty=0, book=book_obj, member=book_obj.issue_member, rem_datetime=datetime.datetime.now())
     reminder.save()
     return view_issued_books(request, "Reminder sent successfully!")
+
+
+def penalty_reminder(bookid):
+    book = Book.objects.get(id=bookid)
+
+    if book.issue_date + relativedelta(months=book.issue_member.book_duration) >= datetime.date.today():
+        penalty = 0
+    else:
+        day_diff = (datetime.date.today() - book.issue_date - relativedelta(months=book.issue_member.book_duration)).days
+        penalty = day_diff * PENALTY_PER_DAY
+
+    reminder = Reminder(rem_id = 'Penalty', message = "Your book return request is approved!", penalty=penalty, book=book, member=book.issue_member, rem_datetime=datetime.datetime.now())
+    reminder.save()
+
+    return penalty

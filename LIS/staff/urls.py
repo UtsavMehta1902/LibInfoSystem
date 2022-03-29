@@ -14,6 +14,6 @@ urlpatterns = [
     path("delete_member/<int:myid>/", views.delete_member, name="delete_member"),
     path("approve_return_request/", views.approve_return_request, name="approve_return_request"),
     path("return_book_approved/<int:bookid>/", views.return_book_approved, name="return_book_approved"),
-    path("send_reminder/<int:bookid>/", views.send_reminder, name="send_reminder"),
+    path("overdue_reminder/<int:bookid>/", views.overdue_reminder, name="overdue_reminder"),
     path('', views.staff_home_page, name="home"),
 ]
