@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from dateutil.relativedelta import relativedelta
 
 PENALTY_PER_DAY = 5
-# Create your views here.
 clerk_cnt = 0
 
 
@@ -63,7 +62,7 @@ def add_book(request):
             isbn = request.POST.get('isbn', 0)
             rack_number = request.POST.get('rack_number', "")
             books = Book.objects.create(
-                title=title, author=author, isbn=isbn, rack_number=rack_number)
+                title=title, author=author, isbn=isbn, date_added=datetime.date.today(), rack_number=rack_number)
             books.save()
             alert = "The book with the given details has been successfully added to the portal!"
             return render(request, "staff/add_book.html", {'alert': alert})
@@ -251,7 +250,7 @@ def penalty_reminder(bookid):
     if book.issue_date + relativedelta(months=book.issue_member.book_duration) >= datetime.date.today():
         penalty = 0
     else:
-        day_diff = (datetime.date.today() - book.issue_date - relativedelta(months=book.issue_member.book_duration)).days
+        day_diff = (datetime.date.today() - (book.issue_date + relativedelta(months=book.issue_member.book_duration))).days
         penalty = day_diff * PENALTY_PER_DAY
 
     reminder = Reminder(rem_id = 'Penalty', message = "Your book return request is approved!", penalty=penalty, book=book, member=book.issue_member, rem_datetime=datetime.datetime.now())
@@ -264,8 +263,9 @@ def issue_statistics(request):
     books = Book.objects.all()
     not_issued_5 = []
     for book in books:
-        if book.date_added + relativedelta(years=5) < datetime.date.today():
-            if book.last_issued_date == null or book.last_issued_date  + relative_delta(years=5) < datetime.date.today():
-                not_issued_5.append(book)
+        if book.date_added is not None:
+            if book.date_added + relativedelta(years=5) < datetime.date.today():
+                if book.last_issued_date is None or book.last_issued_date  + relativedelta(years=5) < datetime.date.today():
+                    not_issued_5.append(book)
 
-    return render(request, "staff/issue_statistics.html", {'not_issued_5': not_issued_5})
+    return render(request, "staff/book_issue_statistics.html", {'not_issued_5': not_issued_5, 'navbar_extends': "staff/librarian_navbar.html",})

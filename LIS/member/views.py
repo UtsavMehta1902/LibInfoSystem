@@ -3,23 +3,14 @@ from django.shortcuts import redirect,render,HttpResponse
 from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
-
-from django.core.mail import EmailMessage
-from django.conf import settings
-# import pytz
 from django.contrib.sites.shortcuts import get_current_site
-# from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
-import json
 from dateutil.relativedelta import relativedelta
 
 
-def member_home_page(request):
-    return render(request, "member/home.html")
-
-
+# function to register a member
 def member_registration(request):
+
+    # post method is called when a new member registers through the registration form
     if request.method == "POST":
 
         member_type = request.POST.get('member_type', "")
@@ -33,6 +24,8 @@ def member_registration(request):
         username = ""
         limit=0
         duration=0
+
+        # username of a member is : member_type + str(insti_id)
 
         if member_type == "UG":
             username= "UG_" + str(insti_id)
@@ -51,69 +44,35 @@ def member_registration(request):
             limit=10
             duration=6
 
+        
         if password != confirm_password:
             passnotmatch = True
             return render(request, "member/registration.html", {'passnotmatch':passnotmatch})
 
+        # creating a new object of the member class
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         member = Member.objects.create(insti_id=insti_id, user=user, book_limit=limit, book_duration=duration)
         
+        # saving the object created to the Django database
         user.save()
         member.save()
 
-        # subject = "Welcome to the Library"
-        # message = f"Hello {first_name + last_name}!\nThank you for registering to our LIS portal.\nYour username is {username}.\nPlease login to your account to continue."
-        # email_from = settings.EMAIL_HOST_USER
-        # recipient_list = [email,]
-        # send_mail( subject, message, email_from, recipient_list, fail_silently=False)
+        # the following message prompt will be shown on screen on successful registration,
+        # showing the username to the member for future login
         message = f"Registration Completed Successfully! Your username is {username}. Please remember this for future purposes."
+    
         return render(request, "member/registration.html", {'message': message})
+
     return render(request, "member/registration.html")
 
-        # connection = EmailBackend(host='smtp.gmail.com',
-        # port=587,
-        # username='noreplycomposit2022@gmail.com', 
-        # password='composit@2022')
-        
-    
-        # body = render_to_string('email_verification.html', {
-        # 'user': user,
-        # 'domain': 'composit-api.herokuapp.com',
-        # # 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        # 'token': account_activation_token.make_token(user),
-        # })
 
-        # emailSender = EmailMessage(
-        #     'Composit Registration confirmed',
-        #     body,
-        #     settings.EMAIL_HOST_USER,
-        #     [email],
-        #     bcc=['sailokesh.gorantla@ecell-iitkgp.org'],
-        #     connection=connection
-        # )
-        # emailSender.fail_silently = False
-        # emailSender.send()
 
-# def activate(request, uidb64, token):
-#     try:
-#         uid = force_text(urlsafe_base64_decode(uidb64))
-#         user = User.objects.get(pk=uid)
-#     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
-#     if user is not None and account_activation_token.check_token(user, token):
-#         user.is_active = True
-#         user.save()
-#         login(request, user)
-#         # return redirect('home')
-#         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-#     else:
-#         return HttpResponse('Activation link is invalid!')
+# this function is only accessible to a member and not to a staff member as it requires member login
+# function renders the main profile page of the user
 
 @login_required(login_url = '/member/login')
 def profile(request):
-    prev_page_path = request.META['HTTP_REFERER']
-    # prev_page_path = prev_page_path.split("next=")[-1]
-    print(prev_page_path)
+
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     is_faculty = False
@@ -142,10 +101,14 @@ def view_current_issues(request):
         active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
     except(Exception):
         active_member = None
-    if (active_member and active_member.user.username == request.user.username):
-        reservation_status = "Active"
+    
+    if reserved_book is not None: 
+        if (active_member and active_member.user.username == request.user.username):
+            reservation_status = "Active"
+        else:
+            reservation_status ="Pending"
     else:
-        reservation_status ="Pending"
+        reservation_status = "Not Applicable"
     return render(request, "member/view_issued_books.html", {'total_books': len(issued_books), 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status, 'book_details':book_details})
 
 
@@ -233,20 +196,6 @@ def issue_book(request, book_id):
         return render(request, "member/profile.html", {'alert':"The book has been issued to you!"})
     else:
         return render(request, "member/profile.html", {'alert':"You cannot issue this book currently. You have reached your maximum book issue limit!!"})
-
-
-@login_required(login_url = '/member/login')
-def view_current_issues(request):
-    issued_books = request.user.member.book_set.all()
-    reserved_book = request.user.member.reserved_book
-    reserve_time = request.user.member.reserve_datetime
-    active_member = reserved_book.member_set.all().order_by('reserve_datetime').first()
-    if (active_member.user.username == request.user.username):
-        reservation_status = "Active"
-    else:
-        reservation_status ="Pending"
-    return render(request, "member/view_issued_books.html", {'issued_books':issued_books, 'reserved_book': reserved_book, 'reserve_time': reserve_time, 'reservation_status': reservation_status})
-
 
 def reserve_book(request, book_id):
     book = Book.objects.get(id = book_id)

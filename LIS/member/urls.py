@@ -13,5 +13,4 @@ urlpatterns = [
     path("view_issue_history/", views.view_issue_history, name="view_issue_history"),
     path("return_book/<int:book_id>/", views.return_book, name="return_book"),
     path("view_reminders/", views.view_reminders, name="view_reminders"),
-    path('', views.member_home_page, name="home"),
 ]
