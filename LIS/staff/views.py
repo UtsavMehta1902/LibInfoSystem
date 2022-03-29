@@ -261,4 +261,11 @@ def penalty_reminder(bookid):
 
 
 def issue_statistics(request):
-    pass
+    books = Book.objects.all()
+    not_issued_5 = []
+    for book in books:
+        if book.date_added + relativedelta(years=5) < datetime.date.today():
+            if book.last_issued_date == null or book.last_issued_date  + relative_delta(years=5) < datetime.date.today():
+                not_issued_5.append(book)
+
+    return render(request, "staff/issue_statistics.html", {'not_issued_5': not_issued_5})

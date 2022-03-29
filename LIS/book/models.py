@@ -11,6 +11,7 @@ class Book(models.Model):
     issue_date = models.DateField(null= True)
     date_added = models.DateField(null=True)
     return_requested = models.BooleanField(default=False)
+    last_issued_date = models.DateField(null=True)
     # #field visible only to the clerks and librarian in book display
     issue_member = models.ForeignKey("member.Member", on_delete = models.SET_NULL, null = True)
 

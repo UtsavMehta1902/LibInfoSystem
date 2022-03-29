@@ -228,6 +228,7 @@ def issue_book(request, book_id):
         member.save()
         book.issue_date = datetime.date.today().isoformat()
         book.issue_member = member
+        book.last_issue_date = datetime.date.today().isoformat()
         book.save()
         return render(request, "member/profile.html", {'alert':"The book has been issued to you!"})
     else:
