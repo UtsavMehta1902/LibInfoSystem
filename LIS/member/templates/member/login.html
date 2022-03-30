@@ -2,11 +2,33 @@
 {% load static %}
 {% block title %} Library Information System {% endblock %}
 {% block css %}
+<style>
+    body {
+      background-color: #1f2739;
+    }
+  </style>
 {% endblock %}
 {% block body %}
+
+<style>
+    h1{
+        color: white;
+    }
+    .row > div > label > i {
+        color: white;
+    }
+
+    .btn-register{
+        background-color: rgb(22, 172, 192);
+        color: white;
+        padding: 0.5rem;
+        margin: 5rem 44% !important;
+        width: 10rem;
+    }
+</style>
 <div class="container">
 <br>
-<h1 class="text-center"><u>Member Login</u></h1>
+<h1 class="text-center"><strong>Member Login</strong></h1>
     <form method="POST"> {% csrf_token %}
 
     <div class="row mt-4">
@@ -22,7 +44,7 @@
             <input type="password" class="form-control mt-2" name="password" placeholder="Enter Password" required>
         </div>
     </div>
-    <button type="submit" class="btn btn-outline-primary mt-4">Login</button>
+    <button type="submit" class="btn btn-outline-primary mt-4 btn-register">Login</button>
 </div>
 
 <script>

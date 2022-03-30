@@ -2,11 +2,32 @@
 {% load static %}
 {% block title %} Library Information System {% endblock %}
 {% block css %}
+<style>
+    body {
+      background-color: #1f2739;
+    }
+  </style>
 {% endblock %}
 {% block body %}
+<style>
+    h1{
+        color: white;
+    }
+    .row > div > label > i {
+        color: white;
+    }
+
+    .btn-register{
+        background-color: rgb(22, 172, 192);
+        color: white;
+        padding: 0.5rem;
+        margin: 5rem 44% !important;
+        width: 10rem;
+    }
+</style>
 <div class="container">
     <br>
-    <h1 class="text-center"><u>Add Book</u></h1><br>
+    <h1 class="text-center"><strong>Add Book</strong></h1><br>
     <form method="POST"> {% csrf_token %}
     <div class="row mt-4">
         <div class="form-group col-md-12">
@@ -36,9 +57,8 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-outline-primary mt-4">Add Book</button>
+    <button type="submit" class="btn btn-outline-primary mt-4 btn-register">Add Book</button>
 </div>
-</form>
 {% endblock %}
 {% block js %}
 <!-- <script>

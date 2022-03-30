@@ -2,12 +2,35 @@
 {% load static %}
 {% block title %} Library Information System {% endblock %}
 {% block css %}
+<style>
+    body {
+      background-color: #1f2739;
+    }
+  </style>
 {% endblock %}
 {% block body %}
+
+<style>
+    form> h1{
+        color: white;
+    }
+    .row > div > label > i {
+        color: white;
+    }
+
+    .btn-register{
+        background-color: rgb(22, 172, 192);
+        color: white;
+        padding: 0.5rem;
+        margin: 5rem 43% !important;
+        width: 10rem;
+    }
+</style>
+
 <div class="container">
     <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
         <br>
-        <h1 class="text-center"><u>Add Staff Members</u></h1>
+        <h1 class="text-center"><strong>Add Staff Members</strong></h1>
 
     <div class="row mt-4">
         <div class="form-group col-md-6">
@@ -41,7 +64,7 @@
             <input type="password" class="form-control mt-2" name="confirm_password" placeholder="Confirm Password" required>
         </div>
     </div>
-    <button type="submit" class="btn btn-outline-primary mt-4">Add Staff</button>
+    <button type="submit" class="btn btn-outline-primary mt-4 btn-register">Add Staff</button>
 </div>
 </form>
 
