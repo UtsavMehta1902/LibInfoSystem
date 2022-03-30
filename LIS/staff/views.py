@@ -158,7 +158,10 @@ def view_issued_books(request, msg=""):
         # to show the due dates of the issued books to the Librarin  and clerk
         due_dates = []
         for book in books:
-            due_dates.append(book.issue_date + relativedelta(months=book.issue_member.book_duration))
+            try:
+                due_dates.append(book.issue_date + relativedelta(months=book.issue_member.book_duration))
+            except(Exception):
+                pass
 
         book_details = zip(books, due_dates)
         navbar_extends = ""
@@ -220,7 +223,7 @@ def delete_book(request, myid):
     if user_name == "LIBC":
 
         book = Book.objects.get(id=myid)
-        if book.issue_date == None or book.issue_date == "":
+        if book.issue_member == None:
             book.delete()
             return redirect("/staff/view_books")
 
