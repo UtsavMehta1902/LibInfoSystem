@@ -38,6 +38,49 @@ def staff_registration(request):
     return render(request, "staff/staff_registration.html")
 
 
+# this function allows the Clerks and the Librarians to login to their respective accounts
+def staff_login(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return render(request, "staff/login.html", {'alert': "Invalid login credentials. Please try again."})
+
+        user_name = user.username.split('_')[0]
+
+        # error handling to prevent a meber from logging in to the staff account
+        if user_name != "LIBC" and user_name != "LIBR":
+            return render(request, "staff/login.html", {'alert': "The given username does not correspond to any staff member. Please enter a valid username."})
+
+        if user is not None:
+            login(request, user)
+            navbar_extends = ""
+            if user_name == "LIBC":
+                navbar_extends = "staff/clerk_navbar.html"
+            else:
+                navbar_extends = "staff/librarian_navbar.html"
+            return render(request, "staff/profile.html", {'user_name': user_name, 'navbar_extends': navbar_extends})
+        else:
+            alert = True
+            return render(request, "staff/login.html", {'alert': alert})
+    return render(request, "staff/login.html")
+
+
+@login_required(login_url='/staff_login')
+def profile(request):
+
+    # this function is invoked when the Librarian and Clerk login and displays them their profile page
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    if user_name == "LIBC":
+        return render(request, "staff/clerk_profile.html")
+    elif user_name == "LIBR":
+        return render(request, "staff/librarian_profile.html")
+    else:
+        return redirect("/403")
+
+
 # this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
 def add_book(request):
@@ -166,6 +209,7 @@ def delete_member(request, myid):
     else:
         return redirect("/403")
 
+
 # this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
 def delete_book(request, myid):
@@ -186,52 +230,6 @@ def delete_book(request, myid):
     else:
         return redirect("/403")
 
-# this function allows the Clerks and the Librarians to login to their respective accounts
-def staff_login(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is None:
-            return render(request, "staff/login.html", {'alert': "Invalid login credentials. Please try again."})
-
-        user_name = user.username.split('_')[0]
-
-        # error handling to prevent a meber from logging in to the staff account
-        if user_name != "LIBC" and user_name != "LIBR":
-            return render(request, "staff/login.html", {'alert': "The given username does not correspond to any staff member. Please enter a valid username."})
-
-        if user is not None:
-            login(request, user)
-            navbar_extends = ""
-            if user_name == "LIBC":
-                navbar_extends = "staff/clerk_navbar.html"
-            else:
-                navbar_extends = "staff/librarian_navbar.html"
-            return render(request, "staff/profile.html", {'user_name': user_name, 'navbar_extends': navbar_extends})
-        else:
-            alert = True
-            return render(request, "staff/login.html", {'alert': alert})
-    return render(request, "staff/login.html")
-
-
-@login_required(login_url='/staff_login')
-def profile(request):
-
-    # this function is invoked when the Librarian and Clerk login and displays them their profile page
-    user_name = request.user.username
-    user_name = user_name.split("_")[0]
-    if user_name == "LIBC":
-        return render(request, "staff/clerk_profile.html")
-    elif user_name == "LIBR":
-        return render(request, "staff/librarian_profile.html")
-    else:
-        return redirect("/403")
-
-
-def Logout(request):
-    logout(request)
-    return redirect("/staff/staff_login")
 
 # this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
@@ -251,6 +249,7 @@ def approve_return_request(request, msg=""):
         return redirect("/403")
 
 
+# function to make reservation active for a book
 def activate_reservation(book):
     try:
         active_member = sort_reservations(book)[0] 
@@ -282,6 +281,7 @@ def return_book_approved(request, bookid):
         # calculation of penalty for late return
         penalty = penalty_reminder(bookid)
 
+        # create an issue thread for the book to add in issue history
         issue_instance = IssueThread.objects.create(member = member, book = book, issue_date = issue_date, return_date = return_date, penalty = penalty)
         issue_instance.save()
         book.issue_date = None
@@ -295,7 +295,7 @@ def return_book_approved(request, bookid):
         return redirect("/403")
 
 
-# helper function to send reminder to a member about her overdue book
+# helper function to send reminder to a member about his/her overdue book
 # or about reminding days left to return the book within due date upon request of the Librarian
 def overdue_reminder(request, bookid):
 
@@ -319,7 +319,8 @@ def overdue_reminder(request, bookid):
     reminder.save()
     return view_issued_books(request, "Reminder sent successfully!")
 
-# function to calculate the penalty for late return
+
+# function to calculate penalty for late return and send reminder
 def penalty_reminder(bookid):
     book = Book.objects.get(id=bookid)
 
@@ -336,16 +337,19 @@ def penalty_reminder(bookid):
 
     return penalty
 
-# 
+
+# function to send reservation reminder to member with active reservation
 def reservation_reminder(member, book):
-    message = "Your reservation for book " + book.title + " is now active."
+    message = "Your reservation is now active. Kindly issue the book within 7 days."
     reminder = Reminder(rem_id='Reservation', message = message,
                         book=book, member=member, rem_datetime=datetime.datetime.now())
     reminder.save()
     print("Reservation reminder sent successfully!")
     return
 
+
 # function to allow the Librarian to view the books that haven't been issued in the last 3 years or last 5 years
+@login_required(login_url='/staff_login')
 def issue_statistics(request):
     books = Book.objects.all()
     not_issued_5 = []
@@ -362,18 +366,42 @@ def issue_statistics(request):
     return render(request, "staff/book_issue_statistics.html", {'not_issued_3': not_issued_3, 'not_issued_5': not_issued_5, 'navbar_extends': "staff/librarian_navbar.html",})
 
 
+# function to view all staff members (for librarian)
+@login_required(login_url='/staff_login')
 def view_all_staff(request):
-    staffs = Staff.objects.all()
-    clerks = []
-    for staff in staffs:
-        if staff.user.username.split("_")[0] == "LIBC":
-            clerks.append(staff)
-    return render(request, "staff/view_all_staff.html", {'clerks': clerks})
+
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+
+    if user_name == "LIBR":
+        staffs = Staff.objects.all()
+        clerks = []
+        for staff in staffs:
+            if staff.user.username.split("_")[0] == "LIBC":
+                clerks.append(staff)
+        return render(request, "staff/view_all_staff.html", {'clerks': clerks})
+    else:
+        return redirect("/403")
 
 
+# function to delete staff members (for librarian)
+@login_required(login_url='/staff_login')
 def delete_staff(request, staffid):
-    user = User.objects.get(id=staffid)
-    staff = Staff.objects.get(user=user)
-    user.delete()
-    staff.delete()
-    return view_all_staff(request)
+
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+
+    if user_name == "LIBR":
+        user = User.objects.get(id=staffid)
+        staff = Staff.objects.get(user=user)
+        user.delete()
+        staff.delete()
+        return view_all_staff(request)
+    else:
+        return redirect("/403")
+
+
+# function to log out
+def Logout(request):
+    logout(request)
+    return redirect("/staff/staff_login")

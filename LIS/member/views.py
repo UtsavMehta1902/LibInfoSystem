@@ -68,6 +68,43 @@ def member_registration(request):
     return render(request, "member/registration.html")
 
 
+# function that handles member login
+def member_login(request):
+
+    # user enters his/her credentials in the Login form
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+
+        # if there doesn't exist a user corresponding to the entered username
+        if user is None:
+            return render(request, "member/login.html", {'alert': "Invalid login credentials. Please try again."})
+
+        # member_type check is necessary so that a Librarian or Clerk cannot login from this page
+        member_type = username.split("_")[0]
+        if member_type != "UG" and member_type != "PG" and member_type != "RS" and member_type != "FAC":
+            alert = "The given username does not correspond to any member. Please enter a valid username."
+            return render(request, "member/login.html", {'alert': alert})
+        
+        # if the username matched with the database
+        if user is not None:
+            login(request, user)
+            
+            # to prevent superuser from login
+            if request.user.is_superuser:
+                return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
+            
+            else:  
+                return redirect("/member/profile")
+
+        else:  
+            alert = "The given username does not correspond to any member. Please enter a valid username."
+            return render(request, "member/login.html", {'alert':alert})
+   
+    return render(request, "member/login.html")
+
+
 
 # this function is only accessible to a member and not to a staff member as it requires member login
 
@@ -86,6 +123,14 @@ def profile(request):
     
     return render(request, "member/profile.html", {'is_faculty': is_faculty})
 
+
+# this function is only accessible to a member and not to a staff member as it requires member login
+@login_required(login_url = '/member/login')
+def view_books(request):
+    # function to show all the books present in the Library for the user to issue/reserve books
+    update_active_reservations()
+    books = Book.objects.all()
+    return render(request, "member/view_books.html", {'books' :books})
 
 
 # this function is only accessible to a member and not to a staff member as it requires member login
@@ -131,49 +176,34 @@ def view_issue_history(request):
     return render(request, "member/view_issue_history.html", {'issue_history':issue_history})
 
 
-# this function is only accessible to a member and not to a staff member as it requires member login
-@login_required(login_url = '/member/login')
-def view_books(request):
-    # function to show all the books present in the Library for the user to issue/reserve books
+def update_active_reservations():
+    # function to update the active reservation status of the books
+    # if a member with active reservation has not issued the book within 7 days, the active reservation is cancelled
 
-    books = Book.objects.all()
-    return render(request, "member/view_books.html", {'books' :books})
-
-
-def member_login(request):
-
-    # user enters his/her credentials in the Login form
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(username=username, password=password)
-
-        # if there doesn't exist a user corresponding to the entered username
-        if user is None:
-            return render(request, "member/login.html", {'alert': "Invalid login credentials. Please try again."})
-
-        # member_type check is necessary so that a Librarian or Clerk cannot login from this page
-        member_type = username.split("_")[0]
-        if member_type != "UG" and member_type != "PG" and member_type != "RS" and member_type != "FAC":
-            alert = "The given username does not correspond to any member. Please enter a valid username."
-            return render(request, "member/login.html", {'alert': alert})
+    for book in Book.objects.all():
+        # if active member has not issued the book within 7 days
+        if book.active_reserve_date != None and (book.active_reserve_date + relativedelta(days = 7)) < datetime.date.today() :
         
-        # if the username matched with the database
-        if user is not None:
-            login(request, user)
-            
-            # to prevent superuser from login
-            if request.user.is_superuser:
-                return HttpResponse("The username or password entered by you is incorrect! Please enter correct member details!")
-            
-            else:  
-                return redirect("/member/profile")
+            # cancel the reservation for current active member
+            active_member = book.member_set.order_by('reserve_datetime').first()
+            active_member.reserved_book = None
+            active_member.reserve_datetime = None
+            active_member.save()
+            try:
 
-        else:  
-            alert = "The given username does not correspond to any member. Please enter a valid username."
-            return render(request, "member/login.html", {'alert':alert})
-   
-    return render(request, "member/login.html")
+                # if another member has reserved the book, then make the reservation for the member and send reminder 
+                new_active_member = book.member_set.order_by('reserve_datetime').first()
+                book.active_reserve_by = new_active_member.user.username
+                book.active_reserve_date = datetime.date.today()
+                reservation_reminder(new_active_member,book)
+
+            except(Exception):
+                # if no other member has reserved the book, then set reservation status to none
+                book.active_reserve_date = None
+                book.active_reserve_by = ""
+            book.save()    
+    return    
+
 
 
 # this function is only accessible to a member and not to a staff member as it requires member login
@@ -188,13 +218,22 @@ def issue_book(request, book_id):
 
     # if the member hasn't exceeded his max issue limit at a time, book is issued to him
     if member.book_limit > len(issued_books):
+
+        if book.active_reserve_by != "" and book.active_reserve_by != member.user.username :
+            return render(request, "member/profile.html", {'alert': "The book is currently under active reservation by someone else. Please try again later."})
+
         member.book_set.add(book)
         book.issue_date = datetime.date.today().isoformat()
         book.issue_member = member
         book.last_issue_date = datetime.date.today().isoformat()
+
         if member.reserved_book == book :
+
             member.reserved_book = None
             member.reserve_datetime = None
+            book.active_reserve_date = None
+            book.active_reserve_by = ""
+
         book.save()
         member.save()
         return render(request, "member/profile.html", {'alert':"The book has been issued to you!"})
@@ -250,6 +289,16 @@ def view_reminders(request):
     reminders = request.user.member.reminder_set.all()
     reminders = reminders.order_by("-rem_datetime")
     return render(request, "member/view_reminders.html", {'reminders': reminders})
+
+
+# function to send reservation reminder to member with active reservation
+def reservation_reminder(member, book):
+    message = "Your reservation is now active. Kindly issue the book within 7 days."
+    reminder = Reminder(rem_id='Reservation', message = message,
+                        book=book, member=member, rem_datetime=datetime.datetime.now())
+    reminder.save()
+    print("Reservation reminder sent successfully!")
+    return
 
 
 # function called when member presses on logout from the member's navigation bar
