@@ -248,15 +248,14 @@ def approve_return_request(request, msg=""):
         return redirect("/403")
 
 
-
 def activate_reservation(book):
     try:
-        active_member = sort_reservations(book)[0]
+        active_member = sort_reservations(book)[0] 
+        book.active_reserve_date = datetime.datetime.now()
+        reservation_reminder(active_member, book)
     except(Exception):
         active_member = None
-    if active_member is not None:
-        reservation_reminder(active_member, book)
-        
+    book.save()
     return book
 
 
@@ -272,11 +271,12 @@ def return_book_approved(request, bookid):
     if user_name == "LIBC":
         book = Book.objects.get(id=bookid)
 
-        # for adding the  issue history, 
+        # for adding the book which is just now returned by the member to his issue history, a new IssueThread instance is created
         member = book.issue_member
         issue_date = book.issue_date
         return_date = datetime.date.today().isoformat()
         
+        # calculation of penalty for late return
         penalty = penalty_reminder(bookid)
 
         issue_instance = IssueThread.objects.create(member = member, book = book, issue_date = issue_date, return_date = return_date, penalty = penalty)
@@ -292,29 +292,38 @@ def return_book_approved(request, bookid):
         return redirect("/403")
 
 
+# helper function to send reminder to a member about her overdue book
+# or about reminding days left to return the book within due date upon request of the Librarian
 def overdue_reminder(request, bookid):
+
     book_obj = Book.objects.get(id=bookid)
     type = ""
     msg = ""
 
+    # if the book is overdue, the function sends a reminder to the member about the number of days the book is overdue
     if book_obj.issue_date + relativedelta(months=book_obj.issue_member.book_duration) < datetime.date.today():
+        days = (datetime.date.today() - (book_obj.issue_date + relativedelta(months=book_obj.issue_member.book_duration))).days
         type = "Overdue"
-        msg = "Book return date is overdue!"
+        msg = f"Book is overdue by {days} days!"
+
+    # if the book is within the due date, the function sends a reminder to the member about the number of days left to return the book
     else:
         days = ((book_obj.issue_date + relativedelta(months=book_obj.issue_member.book_duration)) - datetime.date.today()).days
         type = "Due"
-        msg = f"Book return date is {days} away!"
+        msg = f"Book return date is {days} days away!"
 
     reminder = Reminder.objects.create(rem_id = type, message = msg, penalty=0, book=book_obj, member=book_obj.issue_member, rem_datetime=datetime.datetime.now())
     reminder.save()
     return view_issued_books(request, "Reminder sent successfully!")
 
-
+# function to calculate the penalty for late return
 def penalty_reminder(bookid):
     book = Book.objects.get(id=bookid)
 
+    # if the return is within the due date
     if book.issue_date + relativedelta(months=book.issue_member.book_duration) >= datetime.date.today():
         penalty = 0
+    
     else:
         day_diff = (datetime.date.today() - (book.issue_date + relativedelta(months=book.issue_member.book_duration))).days
         penalty = day_diff * PENALTY_PER_DAY
@@ -324,13 +333,16 @@ def penalty_reminder(bookid):
 
     return penalty
 
-
-def reservation_reminder(active_member, book):
-    reminder = Reminder.objects.create(rem_id = 'Reserved', message = "Your book reservation is now active.", penalty=0, book=book, member=active_member, rem_datetime=datetime.datetime.now())
+# 
+def reservation_reminder(member, book):
+    message = "Your reservation for book " + book.title + " is now active."
+    reminder = Reminder(rem_id='Reservation', message = message,
+                        book=book, member=member, rem_datetime=datetime.datetime.now())
     reminder.save()
+    print("Reservation reminder sent successfully!")
     return
 
-
+# function to allow the Librarian to view the books that haven't been issued in the last 3 years or last 5 years
 def issue_statistics(request):
     books = Book.objects.all()
     not_issued_5 = []

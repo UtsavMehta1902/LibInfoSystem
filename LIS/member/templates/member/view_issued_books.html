@@ -2,8 +2,12 @@
 {% load static %}
 {% block title %} Library Information System {% endblock %}
 {% block css %}
-{% endblock %}
-{% block body %}
+  <style>
+    body {
+      background-color: #1f2739;
+    }
+  </style>
+{% endblock %} {% block body %}
 
 <style>
     .btn-return{
@@ -11,7 +15,7 @@
     }
 
     .btn-cancel{
-        background-color: rgb(255, 51, 0)
+        background-color: rgb(184, 38, 2)
     }
 </style>
 
@@ -22,6 +26,7 @@
       line-height: 1em;
       text-align: center;
       color: #4dc3fa;
+      padding: 3rem;
     }
   
     h3 {
@@ -37,6 +42,7 @@
     .container th h1{
       font-weight: bold;
       font-size: 1em;
+      padding: 0rem;
       text-align: left;
       color: #185875;
     }
@@ -55,7 +61,7 @@
       width: 80%;
       margin: 0 auto;
       display: table;
-      padding: 0 0 8em 0;
+      padding: 3rem 0 8em 0;
     }
   
     .container td,
@@ -104,7 +110,11 @@
     .container td{
       color: rgb(226, 223, 223);
     }
-  
+    
+    .page-title{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     @media (max-width: 800px) {
       .container td:nth-child(4),
       .container th:nth-child(4) {
@@ -115,7 +125,7 @@
 
 {% if total_books > 0 %}
     <div class="container mt-4">
-        <h1 class="text-center"><u>Currently Issued Books</u></h1>
+        <h1 class="text-center page-title"><strong>Currently Issued Books</strong></h1>
         <table class="table table-hover" id="example">
             <thead>
                 <tr>
@@ -149,7 +159,7 @@
     </div>
 {% else %}
     <div class="container mt-4">
-        <h1 class="text-center"><u>Currently Issued Books</u></h1>
+        <h1 class="text-center page-title"><strong>Currently Issued Books</strong></h1>
         <br>
         <h4 class="text-center">You do not have any books issued currently.</h4>
     </div>
@@ -158,7 +168,7 @@
 
 {% if reserved_book != None %}
     <div class="container mt-4">
-        <h1 class="text-center"><u>Currently Reserved Book</u></h1>
+        <h1 class="text-center page-title"><strong>Currently Reserved Book</strong></h1>
         <table class="table table-hover" id="example2">
             <thead>
                 <tr>
@@ -187,7 +197,7 @@
     </div>
 {% else %}
     <div class="container mt-4">
-        <h1 class="text-center"><u>Currently Reserved Book</u></h1>
+        <h1 class="text-center page-title"><strong>Currently Reserved Books</strong></h1>
         <br>
         <h4 class="text-center">You do not have any book reserved currently.</h4>
     </div>

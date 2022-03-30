@@ -8,6 +8,41 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+    <style>
+      #example_filter > label{
+        color: white;
+        font-size: larger;
+      }
+
+      #example_info{
+        color: white;
+      }
+
+      #example_previous{
+        color: white !important;
+      }
+
+      #example_next{
+        color: white !important;
+      }
+
+      #example2_filter > label{
+        color: white;
+        font-size: larger;
+      }
+
+      #example2_info{
+        color: white;
+      }
+
+      #example2_previous{
+        color: white !important;
+      }
+
+      #example2_next{
+        color: white !important;
+      }
+    </style>
 
     <title>{% block title %} {% endblock %}</title>
     {% block css %}
@@ -32,7 +67,7 @@
                   Books
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="/member/view_books/">Add Books</a></li>
+                  <li><a class="dropdown-item" href="/member/view_books/">View All Books</a></li>
                   <li><a class="dropdown-item" href="/member/view_issued_books">View My Currently Issued/Reserved Books</a></li>
                   <li><a class="dropdown-item" href="/member/view_issue_history">View My Issue History</a></li>
                 </ul>
@@ -66,19 +101,26 @@
 
     {% block js %}
     <script>
-      $(document).ready(function () {
-        $('#example').DataTable({
-          dom: 'Bfrtip',
-          buttons: []
+        $(document).ready(function () {
+          $('#example').DataTable({
+            dom: 'Bfrtip',
+            buttons: []
+          });
         });
-      });
 
-      $(document).ready(function () {
-        $('#example2').DataTable({
-          dom: 'Bfrtip',
-          buttons: []
+        $(document).ready(function () {
+          $('#example2').DataTable({
+            dom: 'Bfrtip',
+            buttons: []
+          });
         });
-      });
+        
+        $(document).ready(function () {             
+        $('.dataTables_filter input[type="search"]').css(
+          {'width':'30vw','display':'inline-block', 'color':'white', 'margin': '1rem'}
+        );
+        });
+        
     </script>
     {% endblock %}
   </body>

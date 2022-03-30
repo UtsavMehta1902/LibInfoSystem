@@ -9,6 +9,26 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 
+    <style>
+      #example_filter > label{
+        color: white;
+        font-size: larger;
+      }
+
+      #example_info{
+        color: white;
+      }
+
+      #example_previous{
+        color: white !important;
+      }
+
+      #example_next{
+        color: white !important;
+      }
+
+    </style>
+
     <title>{% block title %} {% endblock %}</title>
     {% block css %}
     {% endblock %}
@@ -83,6 +103,12 @@
           dom: 'Bfrtip',
           buttons: []
         });
+      
+      $(document).ready(function () {             
+      $('.dataTables_filter input[type="search"]').css(
+        {'width':'30vw','display':'inline-block', 'color':'white', 'margin': '1rem'}
+      );
+      
       });
     </script>
     {% endblock %}

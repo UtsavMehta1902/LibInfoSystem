@@ -2,6 +2,11 @@
 {% load static %}
 {% block title %} Library Information System {% endblock %}
 {% block css %}
+<style>
+  body {
+    background-color: #1f2739;
+  }
+</style>
 {% endblock %}
 {% block body %}
 
@@ -20,6 +25,7 @@
       font-size: 3em;
       font-weight: 300;
       line-height: 1em;
+      padding: 3rem;
       text-align: center;
       color: #4dc3fa;
     }
@@ -38,6 +44,7 @@
       font-weight: bold;
       font-size: 1em;
       text-align: left;
+      padding: 0;
       color: #185875;
     }
   
@@ -55,7 +62,7 @@
       width: 80%;
       margin: 0 auto;
       display: table;
-      padding: 0 0 8em 0;
+      padding: 3rem 0 8em 0;
     }
   
     .container td,
@@ -104,7 +111,11 @@
     .container td{
       color: rgb(226, 223, 223);
     }
-  
+    
+    .page-title{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     @media (max-width: 800px) {
       .container td:nth-child(4),
       .container th:nth-child(4) {
@@ -115,7 +126,7 @@
 
 {% if issue_history|length > 0 %}
     <div class="container mt-4">
-        <h1 class="text-center"><u>Your Issue History</u></h1>
+        <h1 class="text-center page-title"><strong>Your Issue History</strong></h1>
         <table class="table table-hover" id="example">
             <thead>
                 <tr>

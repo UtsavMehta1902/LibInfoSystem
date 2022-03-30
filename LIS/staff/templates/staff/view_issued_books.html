@@ -105,13 +105,8 @@
     color: rgb(226, 223, 223);
   }
 
-  #example_filter {
-    width: 50%;
-  }
-
-  #example_filter input{
-    width:50%;
-    margin: 0rem 0 3rem;
+  .page-title{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
   @media (max-width: 800px) {
@@ -123,7 +118,7 @@
 </style>
 
 <div class="container">
-  <h1 class="text-center"><u>Issued Books</u></h1>
+  <h1 class="text-center page-title"><strong>Issued Books</strong></h1>
   {% if total_books == 0 %}
   <h3 class="text-center">No issued books available.</h3>
   {% else %}

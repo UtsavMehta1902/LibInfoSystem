@@ -48,6 +48,9 @@ def member_registration(request):
         if password != confirm_password:
             return render(request, "member/registration.html", {'message':"Passwords do not match. Please try again."})
 
+        if Member.objects.filter(insti_id=insti_id).exists():
+            return render(request, "member/registration.html", {'message':"The given username already exists. Please try again."})
+            
         # creating a new object of the member class
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
         member = Member.objects.create(insti_id=insti_id, user=user, book_limit=limit, book_duration=duration)
@@ -186,11 +189,14 @@ def issue_book(request, book_id):
     # if the member hasn't exceeded his max issue limit at a time, book is issued to him
     if member.book_limit > len(issued_books):
         member.book_set.add(book)
-        member.save()
         book.issue_date = datetime.date.today().isoformat()
         book.issue_member = member
         book.last_issue_date = datetime.date.today().isoformat()
+        if member.reserved_book == book :
+            member.reserved_book = None
+            member.reserve_datetime = None
         book.save()
+        member.save()
         return render(request, "member/profile.html", {'alert':"The book has been issued to you!"})
 
     # if the member has already issued the max number of books he can at a time
