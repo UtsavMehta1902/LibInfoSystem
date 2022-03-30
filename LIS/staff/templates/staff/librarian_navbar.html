@@ -47,8 +47,14 @@
                 <a class="nav-link active" aria-current="page" href="/staff/view_members/">View All Members</a>
               </li>
               &nbsp;&nbsp;&nbsp;
-              <li class="nav-item">
-                <a class="nav-link active" href="/staff/staff_registration/">Add Staff Members</a>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Staff
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="/staff/staff_registration/">Add Staff Members</a></li>
+                  <li><a class="dropdown-item" href="/staff/view_all_staff/">View All Staff</a></li>
+                </ul>
               </li>
               &nbsp;&nbsp;&nbsp;
               <li class="nav-item dropdown">
@@ -103,7 +109,8 @@
           dom: 'Bfrtip',
           buttons: []
         });
-      
+      });
+
       $(document).ready(function () {             
       $('.dataTables_filter input[type="search"]').css(
         {'width':'30vw','display':'inline-block', 'color':'white', 'margin': '1rem'}

@@ -12,7 +12,6 @@ PENALTY_PER_DAY = 5
 def staff_registration(request):
 
     if request.method == "POST":
-
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         email = request.POST['email']
@@ -24,6 +23,9 @@ def staff_registration(request):
 
         if password != confirm_password:
             return render(request, "staff/staff_registration.html", {'message': 'Passwords do not match!'})
+
+        if User.objects.filter(username=user_name).exists():
+            return render(request, "staff/staff_registration.html", {'message': 'Clerk with the given institution ID already exists!'})
 
         user = User.objects.create_user(
             username=user_name, email=email, password=password, first_name=first_name, last_name=last_name)
@@ -156,9 +158,10 @@ def delete_member(request, myid):
     user_name = user_name.split("_")[0]
 
     if user_name == "LIBR":
-        members = Member.objects.get(id=myid)
-        members.user.delete()
-        members.delete()
+        user = User.objects.get(id=myid)
+        member = Member.objects.get(user=user)
+        user.delete()
+        member.delete()
         return redirect("/staff/view_members")
     else:
         return redirect("/403")
@@ -357,3 +360,20 @@ def issue_statistics(request):
                     not_issued_3.append(book)
 
     return render(request, "staff/book_issue_statistics.html", {'not_issued_3': not_issued_3, 'not_issued_5': not_issued_5, 'navbar_extends': "staff/librarian_navbar.html",})
+
+
+def view_all_staff(request):
+    staffs = Staff.objects.all()
+    clerks = []
+    for staff in staffs:
+        if staff.user.username.split("_")[0] == "LIBC":
+            clerks.append(staff)
+    return render(request, "staff/view_all_staff.html", {'clerks': clerks})
+
+
+def delete_staff(request, staffid):
+    user = User.objects.get(id=staffid)
+    staff = Staff.objects.get(user=user)
+    user.delete()
+    staff.delete()
+    return view_all_staff(request)

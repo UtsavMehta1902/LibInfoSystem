@@ -13,10 +13,6 @@
     .btn-return{
         background-color: rgb(22, 172, 192);
     }
-
-    .btn-cancel{
-        background-color: rgb(184, 38, 2)
-    }
 </style>
 
 <style>
@@ -178,7 +174,6 @@
                     <th><h1>Author(s)</h1></th>
                     <th><h1>Reserve Date and Time</h1></th>
                     <th><h1>Reservation Status</h1></th>
-                    <th><h1>Cancel Reservation</h1></th> 
                 </tr>
             </thead>
             <tbody>
@@ -189,7 +184,6 @@
                     <td>{{reserved_book.author}}</td>
                     <td>{{reserve_time}}</td>
                     <td>{{reservation_status}}</td>
-                    <td><a href="/member/" class="btn btn-cancel" onclick="return confirm('Are you sure you want to Cancel the reservation of this book?')">Cancel</a></td>
                 </tr>
           
             </tbody>
