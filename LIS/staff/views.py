@@ -8,13 +8,10 @@ from django.contrib.auth.decorators import login_required
 from dateutil.relativedelta import relativedelta
 
 PENALTY_PER_DAY = 5
-clerk_cnt = 0
-
 # function to register a new staff member: Librarian and Clerks (a Librarian can be registered into the software only once, as a Library has only one Librarian) 
 def staff_registration(request):
 
     if request.method == "POST":
-        global clerk_cnt
 
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -23,18 +20,18 @@ def staff_registration(request):
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
         staff_type = request.POST['staff_type']
-        user_name = ""
+        user_name = "LIBC_" + staff_type
 
         if password != confirm_password:
-            passnotmatch = True
-            return render(request, "staff/staff_registration.html", {'passnotmatch': 'Passwords do not match!'})
+            return render(request, "staff/staff_registration.html", {'message': 'Passwords do not match!'})
 
         user = User.objects.create_user(
             username=user_name, email=email, password=password, first_name=first_name, last_name=last_name)
+
         staff = Staff.objects.create(user=user)
         user.save()
         staff.save()
-        return redirect('/staff/staff_login')
+        return redirect('/staff/staff_login', {'alert': "Staff Registration Successful!"})
 
     return render(request, "staff/staff_registration.html")
 
@@ -72,13 +69,15 @@ def sort_reservations(book):
         pass
     return book_reservations
 
-    
-@login_required(login_url='/staff_login')
 
+ # this function requires a staff member to login and hence cannot be accessed by a normal member   
+@login_required(login_url='/staff_login')
 # function to allow the Librarian or clerk to view all the books in the Library as well as who all have reserved or issued that book
 def view_books(request, msg=""):
     user_name = request.user.username
     user_name = user_name.split("_")[0]
+
+    
     if user_name == "LIBC" or user_name == "LIBR":
         books = Book.objects.all()
         books_reservations = []
@@ -86,25 +85,32 @@ def view_books(request, msg=""):
             books_reservations.append(sort_reservations(book))
         navbar_extends = ""
         
+        # clerk and librarian have different navigation bars based on the functionalities available to them
         if user_name == "LIBC":
             navbar_extends = "staff/clerk_navbar.html"
         else:
             navbar_extends = "staff/librarian_navbar.html"
 
+        # book_details contains the info regarding a book as well as who has currently issued it/reserved it (to be displayed on the webpage)
         books_details = zip(books, books_reservations)
+
         return render(request, "staff/view_books.html", {'books_details':books_details, 'total_books': len(books), 'is_clerk' : (user_name == "LIBC"), 'navbar_extends':navbar_extends, 'msg':msg})
     else:
         return redirect("/403")
 
 
+# this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
 def view_issued_books(request, msg=""):
+
+    # this function allows the Librarian/Clerk to view all the books that are currently issued to the members
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC" or user_name == "LIBR":
         books = Book.objects.all()
         books = books.exclude(issue_date=None)
 
+        # to show the due dates of the issued books to the Librarin  and clerk
         due_dates = []
         for book in books:
             due_dates.append(book.issue_date + relativedelta(months=book.issue_member.book_duration))
@@ -116,12 +122,16 @@ def view_issued_books(request, msg=""):
         else:
             navbar_extends = "staff/librarian_navbar.html"
         return render(request, "staff/view_issued_books.html", {'books': book_details, 'total_books': len(books), 'is_clerk': (user_name == "LIBC"), 'navbar_extends': navbar_extends, 'msg': msg})
-    else:
+    else:      # error handling to prevent any other user to access this page, other than Librarian or clerk
         return redirect("/403")
 
 
+# this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
 def view_members(request):
+
+    # this function allows the Librarian and Clerk to see the details of the registered members
+    # in addition to that, the function also provides a delete button to the Librarian in front of each member on the web-interface
     user_name = request.user.username
 
     user_name = user_name.split("_")[0]
@@ -137,7 +147,11 @@ def view_members(request):
         return redirect("/403")
 
 
+# this function requires a staff member to login and hence cannot be accessed by a normal member
+@login_required(login_url='/staff_login')
 def delete_member(request, myid):
+
+    # the  function is called when the Librarian presses the delete button for a member
     user_name = request.user.username
     user_name = user_name.split("_")[0]
 
@@ -149,23 +163,27 @@ def delete_member(request, myid):
     else:
         return redirect("/403")
 
-
+# this function requires a staff member to login and hence cannot be accessed by a normal member
 @login_required(login_url='/staff_login')
 def delete_book(request, myid):
 
+    # function allows a Library Clerk to delete a book
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC":
+
         book = Book.objects.get(id=myid)
         if book.issue_date == None or book.issue_date == "":
             book.delete()
             return redirect("/staff/view_books")
-        else:
-            return  view_books(request, "Cannot delete a book that is issued!")
+
+        else:    # exception handling to prevent deletion of a book which is currently issued by a member
+            return  view_books(request, "Cannot delete a book that is currently issued to a member!")
+    
     else:
         return redirect("/403")
 
-
+# this function allows the Clerks and the Librarians to login to their respective accounts
 def staff_login(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -176,8 +194,8 @@ def staff_login(request):
 
         user_name = user.username.split('_')[0]
 
+        # error handling to prevent a meber from logging in to the staff account
         if user_name != "LIBC" and user_name != "LIBR":
-            # alert = True
             return render(request, "staff/login.html", {'alert': "The given username does not correspond to any staff member. Please enter a valid username."})
 
         if user is not None:
@@ -196,6 +214,8 @@ def staff_login(request):
 
 @login_required(login_url='/staff_login')
 def profile(request):
+
+    # this function is invoked when the Librarian and Clerk login and displays them their profile page
     user_name = request.user.username
     user_name = user_name.split("_")[0]
     if user_name == "LIBC":
@@ -210,12 +230,24 @@ def Logout(request):
     logout(request)
     return redirect("/staff/staff_login")
 
-
+# this function requires a staff member to login and hence cannot be accessed by a normal member
+@login_required(login_url='/staff_login')
 def approve_return_request(request, msg=""):
-    books = Book.objects.filter(return_requested=True)
-    return render(request, "staff/approve_return_request.html", {'books': books, 'navbar_extends': "staff/clerk_navbar.html", 'alert': msg})
 
-# TODO: ADD PENALTY FUNCTIONALITY ONCE NOTIFICATIONS IS DONE
+    # the function renders the web-page for displaying pending return requests to the clerks,which they can approve
+    # by clicking on Approve button in front of a request
+
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    
+    if user_name == "LIBC":
+        books = Book.objects.filter(return_requested=True)
+        return render(request, "staff/approve_return_request.html", {'books': books, 'navbar_extends': "staff/clerk_navbar.html", 'alert': msg})
+    
+    else:
+        return redirect("/403")
+
+
 
 def activate_reservation(book):
     try:
@@ -228,23 +260,36 @@ def activate_reservation(book):
     return book
 
 
+# this function requires a staff member to login and hence cannot be accessed by a normal member
+@login_required(login_url='/staff_login')
 def return_book_approved(request, bookid):
-    book = Book.objects.get(id=bookid)
 
-    # for issue history
-    member = book.issue_member
-    issue_date = book.issue_date
-    return_date = datetime.date.today().isoformat()
-    penalty = penalty_reminder(bookid)
+    # this function is called when the Clerk approves a pending return request
 
-    issue_instance = IssueThread.objects.create(member = member, book = book, issue_date = issue_date, return_date = return_date, penalty = penalty)
-    issue_instance.save()
-    book.issue_date = None
-    book.issue_member = None
-    book.return_requested = False
-    book = activate_reservation(book)
-    book.save()
-    return approve_return_request(request, "Book return approved successfully!")
+    user_name = request.user.username
+    user_name = user_name.split("_")[0]
+    
+    if user_name == "LIBC":
+        book = Book.objects.get(id=bookid)
+
+        # for adding the  issue history, 
+        member = book.issue_member
+        issue_date = book.issue_date
+        return_date = datetime.date.today().isoformat()
+        
+        penalty = penalty_reminder(bookid)
+
+        issue_instance = IssueThread.objects.create(member = member, book = book, issue_date = issue_date, return_date = return_date, penalty = penalty)
+        issue_instance.save()
+        book.issue_date = None
+        book.issue_member = None
+        book.return_requested = False
+        book = activate_reservation(book)
+        book.save()
+        return approve_return_request(request, "Book return approved successfully!")
+    
+    else:
+        return redirect("/403")
 
 
 def overdue_reminder(request, bookid):

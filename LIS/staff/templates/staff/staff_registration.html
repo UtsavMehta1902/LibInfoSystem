@@ -25,6 +25,10 @@
             <label><i style="font-weight: bold;">Email</i></label>
             <input type="email" class="form-control mt-2" name="email" placeholder="Enter Email" required>
         </div>
+        <div class="form-group col-md-6">
+            <label><i style="font-weight: bold;">Clerk ID</i></label>
+            <input type="text" class="form-control mt-2" name="staff_type" placeholder="Enter ClerkID" required>
+        </div>
     </div>
 
     <div class="row mt-4">
@@ -42,8 +46,8 @@
 </form>
 
 <script>
-    {% if passnotmatch %}
-    alert("Passwords do not match!");
+    {% if message %}
+       alert("{{ message }}");
     {% endif %}
 </script>
 {% endblock %}

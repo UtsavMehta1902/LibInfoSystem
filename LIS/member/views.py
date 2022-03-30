@@ -46,8 +46,7 @@ def member_registration(request):
 
         
         if password != confirm_password:
-            passnotmatch = True
-            return render(request, "member/registration.html", {'passnotmatch':passnotmatch})
+            return render(request, "member/registration.html", {'message':"Passwords do not match. Please try again."})
 
         # creating a new object of the member class
         user = User.objects.create_user(username=username, email=email, password=password,first_name=first_name, last_name=last_name)
@@ -226,7 +225,6 @@ def reserve_book(request, book_id):
         return render(request, "member/profile.html", {'alert':"You have been added to the waiting list for reserving this book. You will be notified if you have an active reservation on this book!"})
 
 
-
 # this function is only accessible to a member and not to a staff member as it requires member login
 @login_required(login_url = '/member/login')
 def return_book(request, book_id):
@@ -237,6 +235,7 @@ def return_book(request, book_id):
     book.save()
     return render(request, "member/profile.html", {'alert':"Your return request has been sent! Please wait for confirmation."})
 
+
 # this function is only accessible to a member and not to a staff member as it requires member login
 @login_required(login_url = '/member/login')
 def view_reminders(request):
@@ -246,8 +245,8 @@ def view_reminders(request):
     reminders = reminders.order_by("-rem_datetime")
     return render(request, "member/view_reminders.html", {'reminders': reminders})
 
+
 # function called when member presses on logout from the member's navigation bar
 def member_logout(request):
     logout(request)
     return redirect("/member/login")
-
