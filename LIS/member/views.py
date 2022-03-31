@@ -4,8 +4,8 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
 from django.contrib.sites.shortcuts import get_current_site
-from dateutil.relativedelta import relativedelta
 
+from dateutil.relativedelta import relativedelta
 
 # function to register a member
 def member_registration(request):
