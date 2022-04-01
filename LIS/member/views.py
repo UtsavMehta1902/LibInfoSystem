@@ -4,7 +4,9 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 import datetime
 from django.contrib.sites.shortcuts import get_current_site
-
+from django import forms
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from dateutil.relativedelta import relativedelta
 
 # function to register a member
