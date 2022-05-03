@@ -1,7 +1,9 @@
 # GNOSIS
 
 ## About
-GNOSIS is a Library Information System, built to automate commonly used services like Adding-Issuing-Reserving-Returing-Deleting Books, and managing Members and Clerks.
+- GNOSIS is a Library Information System, built to automate commonly used services like Adding-Issuing-Reserving-Returing-Deleting Books, and managing Members and Clerks.
+- The website is hosted on Heroku, check it out :
+https://lis-gnosis.herokuapp.com/
 ## Software Pre-requisites
 - Python 3 or above
 - Django pre-installed
