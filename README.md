@@ -2,8 +2,10 @@
 
 ## About
 - GNOSIS is a Library Information System, built to automate commonly used services like Adding-Issuing-Reserving-Returing-Deleting Books, and managing Members and Clerks.
-- The website is hosted on Heroku, check it out :
-https://lis-gnosis.herokuapp.com/
+- The website is hosted on python-anywhere, check it out :
+http://betathetha.pythonanywhere.com/
+- For a member login, use: Username -- UG_20CS10001 and Password -- pwd
+- For a staff login, use: Username -- LIBC_LIBC_0 and Password -- libpwd1234
 ## Software Pre-requisites
 - Python 3 or above
 - Django pre-installed
